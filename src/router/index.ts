@@ -4,6 +4,8 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const Home = () => import('../views/Home.vue');
 const About = () => import('../views/About.vue');
 const Login = () => import('../views/Login.vue');
+const BaseCode = () => import('../views/CodeEditor.vue');
+const NormalOJ = () => import('../views/NormalOJ.vue');
 
 // 定义路由
 const routes: Array<RouteRecordRaw> = [
@@ -21,6 +23,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/basecode',
+    name: 'BaseCode',
+    component: BaseCode
+  },
+  {
+    path: '/normalOJ',
+    name: 'NormalOJ',
+    component: NormalOJ
   }
 ];
 

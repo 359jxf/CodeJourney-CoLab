@@ -9,7 +9,6 @@
 </template>
 
 <script lang="ts">
-import CustomAlert from './components/CustomAlert.vue';
 
 export default {
   name: 'App'

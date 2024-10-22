@@ -9,14 +9,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.2",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/lang-python": "^6.1.6",
+    "@codemirror/lang-yaml": "^6.1.1",
+    "@codemirror/state": "6.x",
+    "@codemirror/theme-one-dark": "^6.1.2",
+    "codemirror": "^6.0.1",
     "element-plus": "^2.8.6",
     "pinia": "^2.2.4",
-    "vue": "^3.5.10",
+    "vue": "^3.5.12",
+    "vue-codemirror": "^6.1.1",
     "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
-    "typescript": "^5.5.3",
+    "typescript": "^5.6.3",
     "vite": "^5.4.8",
     "vue-tsc": "^2.1.6"
   }
