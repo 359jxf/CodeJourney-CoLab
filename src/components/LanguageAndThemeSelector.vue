@@ -1,25 +1,38 @@
 <template>
-  <div>
-    <!-- 语言选择器 -->
-    <label for="language">选择语言：</label>
-    <select id="language" v-model="localSelectedLanguage" @change="updateCM">
-      <option value="javascript">JavaScript</option>
-      <option value="python">Python</option>
-    </select>
+  <div class="flex flex-col gap-4">
+    <div class="selector">
+      <!-- 语言选择器 -->
+      <div>
+        <label for="language">language：</label>
+        <el-select v-model="localSelectedLanguage" placeholder="选择语言" size="large" style="width: 240px" @change="updateCM">
+          <el-option
+            v-for="item in languageOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
 
-    <!-- 主题选择器 -->
-    <label for="theme">选择主题：</label>
-    <select id="theme" v-model="selectedTheme" @change="updateCM">
-      <option value="oneDark">One Dark</option>
-      <option value="customLight">Custom Light</option>
-    </select>
-
+      <!-- 主题选择器 -->
+      <div>
+        <label for="theme">theme：</label>
+        <el-select v-model="selectedTheme" placeholder="选择主题" size="large" style="width: 240px" @change="updateCM">
+          <el-option
+            v-for="item in themeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </div>
+    </div>
     <!-- CodeMirror 编辑器 -->
     <codemirror
       :key="editorKey"
       v-model="localCode"
       placeholder="Code goes here..."
-      :style="{ width: '1000px', height: '400px' }"
+      :style="{ width: '600px', height: '400px' }"
       :autofocus="true"
       :indent-with-tab="true"
       :tab-size="2"
@@ -32,7 +45,6 @@
 import { ref, watch } from 'vue';
 import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
-import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
 
@@ -54,11 +66,23 @@ const localSelectedLanguage = ref(props.selectedLanguage);  // 选择的语言
 const selectedTheme = ref<string>("oneDark");  // 默认主题
 const editorKey = ref(0);  // 用于强制重新渲染编辑器
 
-let extensions = [javascript(), oneDark];
+// 语言和主题的选择项
+const languageOptions = [
+  { value: 'python', label: 'Python' },
+  // 你可以在这里加入更多的语言
+];
+
+const themeOptions = [
+  { value: 'oneDark', label: 'One Dark' },
+  { value: 'customLight', label: 'Custom Light' },
+];
+
+// CodeMirror 扩展配置
+let extensions = [python(), oneDark];
 
 const languageExtensions: Record<string, any> = {
-  javascript: javascript(),
   python: python(),
+  // 可以添加其他语言扩展
 };
 
 const themeExtensions: Record<string, any> = {
@@ -97,9 +121,30 @@ const updateCM = () => {
 // 监听局部变量的变化，并通过 emit 事件将更新传递回父组件
 watch(localSelectedLanguage, () => {
   emit('update:selectedLanguage', localSelectedLanguage.value);
+  updateCM(); // 当语言发生变化时，更新编辑器
 });
 
 watch(localCode, () => {
   emit('update:code', localCode.value);
 });
 </script>
+
+<style scoped>
+.flex {
+  display: flex;
+  gap: 1rem;
+}
+.flex-col {
+  flex-direction: column;
+}
+
+.selector {
+  display: flex;
+  justify-content: space-around;
+}
+
+.selector div {
+  display:flex;
+  flex-direction: column;
+}
+</style>

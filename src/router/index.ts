@@ -6,6 +6,7 @@ const About = () => import('../views/About.vue');
 const Login = () => import('../views/Login.vue');
 const BaseCode = () => import('../views/CodeEditor.vue');
 const NormalOJ = () => import('../views/NormalOJ.vue');
+const MyProfile = () => import('../views/MyProfile.vue');
 
 // 定义路由
 const routes: Array<RouteRecordRaw> = [
@@ -33,6 +34,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/normalOJ',
     name: 'NormalOJ',
     component: NormalOJ
+  },
+  {
+    path: '/profile',
+    name: 'MyProfile',
+    component: MyProfile
   }
 ];
 
