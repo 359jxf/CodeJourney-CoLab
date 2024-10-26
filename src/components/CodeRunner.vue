@@ -1,25 +1,27 @@
 <template>
-  <div class="btn">
-    <el-button @click="runCode" type="success">Run</el-button>
-  </div>
-  <el-tabs type="border-card" style="height: 180px;">
-    <!-- 参数输入 -->
-    <el-tab-pane label="input">
-      <el-input
-        id="parameters"
-        v-model="parameters"
-        placeholder="parameters..."
-        style="margin-top: 10px; width: 100%; height: 100px;"
-      />
-    </el-tab-pane>
+  <div class="container">
+    <div class="btn">
+      <el-button @click="runCode" type="success">Run</el-button>
+    </div>
+    <el-tabs type="border-card" style="width: 800px;height: 180px;">
+      <!-- 参数输入 -->
+      <el-tab-pane label="input">
+        <el-input
+          id="parameters"
+          v-model="parameters"
+          placeholder="parameters..."
+          style="margin-top: 10px; width: 100%; height: 100px;"
+        />
+      </el-tab-pane>
 
-    <!-- 显示结果 -->
-    <el-tab-pane label="output">
-      <div>
-        <pre>{{ result }}</pre>
-      </div>
-    </el-tab-pane>
-  </el-tabs>
+      <!-- 显示结果 -->
+      <el-tab-pane label="output">
+        <div>
+          <pre>{{ result }}</pre>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -78,10 +80,15 @@ const runCode = async () => {
 </script>
 
 <style scoped>
-/* 样式可以根据需要调整 */
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 水平居中 */
+  align-items: center;     /* 垂直居中 */
+}
+
 .btn {
   display: flex;
-  justify-content: flex-end;
   margin: 10px;
 }
 </style>

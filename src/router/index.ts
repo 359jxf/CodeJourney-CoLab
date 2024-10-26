@@ -4,6 +4,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 const Home = () => import('../views/Home.vue');
 const About = () => import('../views/About.vue');
 const Login = () => import('../views/Login.vue');
+const Register = () => import('../views/Register.vue');
 const BaseCode = () => import('../views/CodeEditor.vue');
 const NormalOJ = () => import('../views/NormalOJ.vue');
 const MyProfile = () => import('../views/MyProfile.vue');
@@ -24,6 +25,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register
   },
   {
     path: '/basecode',

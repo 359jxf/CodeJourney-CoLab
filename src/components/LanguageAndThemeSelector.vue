@@ -1,10 +1,10 @@
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex">
     <div class="selector">
       <!-- 语言选择器 -->
       <div>
         <label for="language">language：</label>
-        <el-select v-model="localSelectedLanguage" placeholder="选择语言" size="large" style="width: 240px" @change="updateCM">
+        <el-select v-model="localSelectedLanguage" placeholder="language" size="large" style="width: 240px" @change="updateCM">
           <el-option
             v-for="item in languageOptions"
             :key="item.value"
@@ -17,7 +17,7 @@
       <!-- 主题选择器 -->
       <div>
         <label for="theme">theme：</label>
-        <el-select v-model="selectedTheme" placeholder="选择主题" size="large" style="width: 240px" @change="updateCM">
+        <el-select v-model="selectedTheme" placeholder="theme" size="large" style="width: 240px" @change="updateCM">
           <el-option
             v-for="item in themeOptions"
             :key="item.value"
@@ -32,7 +32,7 @@
       :key="editorKey"
       v-model="localCode"
       placeholder="Code goes here..."
-      :style="{ width: '600px', height: '400px' }"
+      :style="{ width: '800px', height: '400px' }"
       :autofocus="true"
       :indent-with-tab="true"
       :tab-size="2"
@@ -133,18 +133,16 @@ watch(localCode, () => {
 .flex {
   display: flex;
   gap: 1rem;
-}
-.flex-col {
   flex-direction: column;
+  justify-content: center; /* 水平居中 */
+  align-items: center;     /* 垂直居中 */
 }
 
 .selector {
   display: flex;
+  text-align: center;
   justify-content: space-around;
+  gap:10px;
 }
 
-.selector div {
-  display:flex;
-  flex-direction: column;
-}
 </style>
