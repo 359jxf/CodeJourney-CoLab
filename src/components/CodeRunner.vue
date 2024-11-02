@@ -1,9 +1,9 @@
 <template>
   <div class="container">
     <div class="btn">
-      <el-button @click="runCode" type="success">Run</el-button>
+      <el-button @click="runCode" :style="{backgroundColor: props.color,color:props.textColor} ">Run</el-button>
     </div>
-    <el-tabs type="border-card" style="width: 800px;height: 180px;">
+    <el-tabs type="border-card" :style="{ width: props.width, height: props.height, borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}">
       <!-- 参数输入 -->
       <el-tab-pane label="input">
         <el-input
@@ -17,7 +17,7 @@
       <!-- 显示结果 -->
       <el-tab-pane label="output">
         <div>
-          <pre>{{ result }}</pre>
+          <pre style="color: 616161;">{{ result }}</pre>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -31,6 +31,10 @@ import { ref, onMounted, defineProps } from 'vue';
 const props = defineProps<{
   code: string;
   selectedLanguage: string;
+  height:string;
+  width:string;
+  color: string;
+  textColor: string;
 }>();
 
 // 本地状态
@@ -70,6 +74,7 @@ const runCode = async () => {
 
       const output = pyodide.runPython(`sys.stdout.getvalue()`);
       result.value = output || "no output";
+      console.log(result.value);
     } else {
       result.value = `The language ${props.selectedLanguage} is not supported by now`;
     }

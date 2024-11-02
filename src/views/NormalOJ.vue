@@ -38,12 +38,20 @@
             <LanguageAndThemeSelector
               v-model:code="code"
               v-model:selectedLanguage="selectedLanguage"
+              height= "400px"
+              width="800px"
+              color=var(--primary-color)
+              textColor=var(--color)
             />
     
             <!-- 代码运行器 -->
             <CodeRunner
               :code="code"
               :selectedLanguage="selectedLanguage"
+              height= "180px"
+              width="800px"
+              color=var(--primary-color)
+              textColor=var(--color)
             />
           </div>
         </div>

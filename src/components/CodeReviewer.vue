@@ -2,7 +2,7 @@
     <div>
       <!-- 运行测试按钮 -->
       <div class="btn">
-        <el-button @click="runTests" type="primary">Submit</el-button>
+        <el-button @click="runTests" type="success" circle><el-icon><Upload /></el-icon></el-button>
       </div>
       <!-- 弹窗 -->
       <el-dialog v-model="dialogVisible" title="result" width="600">

@@ -1,30 +1,36 @@
 <template>
-  <div class="flex">
+  <div class="flex" :style="{backgroundColor: props.color} ">
     <div class="selector">
-      <!-- 语言选择器 -->
-      <div>
-        <label for="language">language：</label>
-        <el-select v-model="localSelectedLanguage" placeholder="language" size="large" style="width: 240px" @change="updateCM">
-          <el-option
-            v-for="item in languageOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+      <div class="inner-selector">
+        <!-- 语言选择器 -->
+        <div>
+          <label for="language"><el-icon :style="{color: props.textColor} "><Place /></el-icon></label>
+          <el-select v-model="localSelectedLanguage" placeholder="language" size="small" style="width: 100px" @change="updateCM">
+            <el-option
+              v-for="item in languageOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
+
+        <!-- 主题选择器 -->
+        <div>
+          <label for="theme"><el-icon :style="{color: props.textColor} " ><Picture /></el-icon></label>
+          <el-select v-model="selectedTheme" placeholder="theme" size="small" style="width: 100px" @change="updateCM">
+            <el-option
+              v-for="item in themeOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </div>
       </div>
 
-      <!-- 主题选择器 -->
       <div>
-        <label for="theme">theme：</label>
-        <el-select v-model="selectedTheme" placeholder="theme" size="large" style="width: 240px" @change="updateCM">
-          <el-option
-            v-for="item in themeOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
+        <el-icon :style="{color: props.textColor} "><More /></el-icon>
       </div>
     </div>
     <!-- CodeMirror 编辑器 -->
@@ -32,7 +38,7 @@
       :key="editorKey"
       v-model="localCode"
       placeholder="Code goes here..."
-      :style="{ width: '800px', height: '400px' }"
+      :style="{ width: props.width, height: props.height }"
       :autofocus="true"
       :indent-with-tab="true"
       :tab-size="2"
@@ -52,6 +58,10 @@ import { EditorView } from "@codemirror/view";
 const props = defineProps<{ 
   code: string;
   selectedLanguage: string;
+  height: string;
+  width: string;
+  color: string;
+  textColor: string;
 }>();
 
 // Emit 用于向父组件发送更新事件
@@ -132,17 +142,20 @@ watch(localCode, () => {
 <style scoped>
 .flex {
   display: flex;
-  gap: 1rem;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 5px;
   flex-direction: column;
   justify-content: center; /* 水平居中 */
-  align-items: center;     /* 垂直居中 */
 }
 
 .selector {
   display: flex;
-  text-align: center;
-  justify-content: space-around;
-  gap:10px;
+  justify-content: space-between ;
 }
 
+.inner-selector {
+  display: flex;
+  gap: 1rem;
+}
 </style>

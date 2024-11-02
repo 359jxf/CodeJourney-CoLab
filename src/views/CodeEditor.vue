@@ -1,21 +1,42 @@
 <template>
+  <StickyNavbar
+    textColor=var(--color)
+    highlightColor=var(--primary-color)
+  />
+  <UserList />
   <div class="wrapper">
-    <StickyNavbar
-      textColor=var(--color)
-      highlightColor=var(--primary-color)
-    />
+    <h1 class="title">Ready for Code Exploration!</h1>
+    <div class="inner-wrapper">
+      <div class="code-section">
+        <!-- 语言选择器和主题选择器以及代码编辑器 -->
+        <LanguageAndThemeSelector
+          v-model:code="code"
+          v-model:selectedLanguage="selectedLanguage"
+          height= "500px"
+          width="900px"
+          color=var(--primary-color)
+          textColor=var(--color)
+        />
 
-    <!-- 语言选择器和主题选择器以及代码编辑器 -->
-    <LanguageAndThemeSelector
-      v-model:code="code"
-      v-model:selectedLanguage="selectedLanguage"
-    />
-
-    <!-- 代码运行器 -->
-    <CodeRunner
-      :code="code"
-      :selectedLanguage="selectedLanguage"
-    />
+        <!-- 代码运行器 -->
+        <CodeRunner
+          :code="code"
+          :selectedLanguage="selectedLanguage"
+          height= "180px"
+          width="900px"
+          color=var(--primary-color)
+          textColor=var(--color)
+        />
+      </div>
+      <div class="chat-section">
+        <ChatApp
+          height= "770px"
+          width="300px"
+          color=var(--primary-color)
+          textColor=var(--color)
+        />
+      </div>
+    </div>
   </div>
   <ThemeSelector :initialTheme="currentTheme" />
 </template>
@@ -26,6 +47,8 @@ import LanguageAndThemeSelector from '../components/LanguageAndThemeSelector.vue
 import CodeRunner from '../components/CodeRunner.vue'; // 导入 CodeRunner 组件
 import ThemeSelector from '../components/BackgroundTheme.vue';
 import StickyNavbar from '../components/Navbar.vue';
+import UserList from '../components/PeopleList.vue';
+import ChatApp from '../components/ChatApp.vue';
 
 // 定义当前主题
 const currentTheme = ref({
@@ -57,7 +80,33 @@ body {
   }
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
   justify-content: center; /* 水平居中 */
   align-items: center;     /* 垂直居中 */
+}
+
+.inner-wrapper {
+  display: flex;
+  justify-content: center; 
+  align-items: center;   
+  border-radius: 10px; 
+  padding: 10px;
+  gap: 10px;
+}
+
+.code-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; 
+  align-items: center;  
+}
+
+.chat-section {
+
+}
+
+.title {
+  color: var(--color);
 }
 </style>
