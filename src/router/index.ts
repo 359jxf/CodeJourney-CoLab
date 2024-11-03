@@ -21,7 +21,17 @@ const routes: Array<RouteRecordRaw> = [
     path: '/login',
     name: 'Login',
     component: Login
-  }
+  },
+  {
+     path: '/basecode',
+    name: 'Basecode',
+    component: About 
+  }, // 替换为实际组件
+  {
+     path: '/normalOJ',
+    name: 'NormalOj',
+     component: About 
+  } // 替换为实际组件
 ];
 
 // 创建路由实例
