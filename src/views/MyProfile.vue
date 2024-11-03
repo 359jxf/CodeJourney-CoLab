@@ -309,12 +309,12 @@
 }
 .calendar-container {
   position: relative;
-    top: -140px;
+    top: -160px;
     left: 180px;
 }
 .activities-container {
   position: relative;
-    top: -250px;
+    top: -320px;
     left: -9px;
 }
 

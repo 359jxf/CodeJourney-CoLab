@@ -17,12 +17,12 @@
 
   // 雷达图数据
   const indicatorData = [
-    { name: 'Interactive Teaching', max: 50 },
-    { name: 'Team Projects', max: 50 },
-    { name: 'Team Competitions', max: 50 },
-    { name: 'Peer Code Review', max: 50 },
-    { name: 'Free Exploration', max: 50 },
-    { name: 'Individual Practice', max: 50 },
+  { name: 'Interactive\nTeaching', max: 50 },
+  { name: 'Team\nProject', max: 50 },
+  { name: 'Team\nCompetition', max: 50 },
+  { name: 'Peer Code\nReview', max: 50 },
+  { name: 'Free\nExploration', max: 50 },
+  { name: 'Individual\nPractice', max: 50 },
   ];
   
   // 雷达图数据系列
@@ -77,7 +77,8 @@
         indicator: indicatorData,
         axisName: {
           color: props.textColor || '#888888',
-          fontSize: 10,
+          fontSize: 8,
+          formatter: (value) => value.split('\n').join('\n'), // 允许分行
         },
         splitLine: {
           lineStyle: {
@@ -89,6 +90,8 @@
             color: ['#f8f8f8', '#fff'],
           },
         },
+        center: ['50%', '50%'],
+        radius: '65%',
       },
       series: [
         {
@@ -133,10 +136,11 @@
   <style scoped>
   .radar-chart-container {
     display: flex;
+    position: relative;
     justify-content: center;
     align-items: center;
-    width: 300px;
-    height: 260px;
+    width: 330px;
+    height: 290px;
     max-width: 600px;
     margin: 0 auto;
     padding: 5px;
@@ -146,8 +150,13 @@
   }
   
   .radar-chart {
-    width: 100%;
-    height: 100%;
+    border-radius: 0;
+    position: absolute;
+    left:5%;
+    width: 90%;
+    height: 90%;
+    margin:0;
+    padding: 0;
   }
   </style>
   

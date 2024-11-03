@@ -102,11 +102,11 @@
     width: 102%;
     height: 25px;
     margin:0;
-    display: flex;
+    display:flex;
     align-items: center;
     padding: 15px;
     position: relative;
-    background-color: #ffffff;
+    background-color: hsl(0, 0%, 100%);
   }
   
   .motto-text {
@@ -117,9 +117,13 @@
   }
   
   .edit-icon {
+    background-color: #ffffff;
     cursor: pointer;
-    position: relative;
-    margin-left: 0px;
+    position: absolute;
+    right:20px;
+    top:15px;
+    margin-left: 100px;
+    border-radius: 0;
     width: 15px; 
     height: 15px; /* 设置图标大小 */
   }

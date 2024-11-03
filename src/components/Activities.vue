@@ -12,6 +12,7 @@
           :key="tab" 
           @click="activeTab = tab"
           :class="{ active: activeTab === tab }"
+          :style="getButtonStyle(tab)"
         >
           {{ tab }}
         </button>
@@ -41,12 +42,39 @@
   // 定义标签和活动数据
   const tabs = ['Practices', 'Projects', 'Competitions'];
   const activeTab = ref(tabs[0]);
+
+  // 获取按钮样式的方法
+    const getButtonStyle = (tab) => {
+    if (activeTab.value === tab) {
+        // 如果按钮被选中，使用 Props 中的颜色和文字颜色
+        return {
+        backgroundColor: props.color,
+        color: props.textColor,
+        };
+    }
+    // 如果按钮未被选中，返回默认样式
+    return {};
+    };
   
   // 活动数据，假设包含了各个标签的数据
   const activities = ref([
     { tab: 'Practices', description: 'Add two numbers', date: '2024/10/31' },
     { tab: 'Practices', description: 'Add two matrix', date: '2024/10/31' },
     { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
+    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
     { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
   ]);
   
@@ -75,7 +103,7 @@
   
   .card-header h2 {
     font-size: 18px;
-    color: #333333;
+    color: #BABABA;
     font-weight: bold;
     margin: 0;
   }
