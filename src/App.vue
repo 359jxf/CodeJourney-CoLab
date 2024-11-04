@@ -1,23 +1,12 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/">首页</router-link>
-      <router-link to="/about">关于我们</router-link>
-    </nav>
     <router-view /> <!-- 路由视图 -->
   </div>
 </template>
 
-<script lang="ts">
-import CustomAlert from './components/CustomAlert.vue';
-
-export default {
-  name: 'App'
-}
+<script lang="ts" setup>
 </script>
 
-<style>
-nav {
-  margin-bottom: 20px;
-}
+<style scoped>
 </style>
+

@@ -3,12 +3,15 @@ import App from './App.vue';
 import router from './router'; // 导入路由
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
-const app = createApp(App);
+const app = createApp(App)
+for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+  app.component(key, component)
+}
 
 // 使用 Element Plus
 app.use(ElementPlus);
-
 app.use(router); // 使用路由
-app.mount('#app');
 
+app.mount('#app');
