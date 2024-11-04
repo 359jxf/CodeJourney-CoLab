@@ -13,7 +13,7 @@
   
   <script lang="ts" setup>
   import { ref, defineProps, watch } from 'vue';
-  
+
   // 定义 Theme 接口
   interface Theme {
     background: string;
