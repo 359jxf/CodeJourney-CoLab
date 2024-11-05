@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/server",
+    "typeRoots": [
+      "./node_modules/@types",
+      "./server/types"
+    ]
+  },
+  "include": ["server/**/*"]
+}

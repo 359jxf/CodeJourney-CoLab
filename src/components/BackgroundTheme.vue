@@ -76,9 +76,10 @@
   
   <style scoped>
   .theme-btn-container {
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 2rem;
+    z-index: 1000;
   }
     
   .theme-btn {

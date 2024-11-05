@@ -1,21 +1,13 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
+    "outDir": "./dist",
     "jsx": "preserve",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]  // 添加这行
-    },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
-    ]
+      "@/*": ["src/*"],
+      "@codemirror/state": ["./node_modules/@codemirror/state"]
+    }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["src/**/*"]
 }

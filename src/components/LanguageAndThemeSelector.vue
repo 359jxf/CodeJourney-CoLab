@@ -48,11 +48,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import { Connection } from 'sharedb/lib/client';
 
 // Props 接收从父组件传递过来的数据
 const props = defineProps<{ 
@@ -119,6 +121,44 @@ const themeExtensions: Record<string, any> = {
   }),
 };
 
+// ShareDB 集成到 CodeMirror 的逻辑
+const initializeShareDB = () => {
+  const socket = new ReconnectingWebSocket(`ws://${window.location.host}/ws`, [], {
+    maxEnqueuedMessages: 0
+  });
+  const connection = new Connection(socket);
+  const doc = connection.get('examples', 'codemirror-doc');
+
+  doc.subscribe((error:unknown) => {
+    if (error) {
+      console.error('文档订阅出错:', error);
+      return;
+    }
+    // 如果文档为空，创建一个新的文档
+    if (!doc.type) {
+      doc.create({ content: '' }, (error:unknown) => {
+        if (error) console.error('创建文档出错:', error);
+      });
+    } else {
+      localCode.value = doc.data.content; // 加载文档内容到编辑器
+    }
+
+    // 监听 CodeMirror 内容变化，并提交更改到 ShareDB
+    watch(localCode, (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        doc.submitOp([{ p: ['content'], oi: newValue, od: oldValue }]);
+      }
+    });
+
+    // 监听 ShareDB 文档操作，并更新 CodeMirror 编辑器内容
+    doc.on('op', (op:any) => {
+      if (op[0].p[0] === 'content') {
+        localCode.value = doc.data.content;
+      }
+    });
+  });
+};
+
 // 更新 CodeMirror 的扩展
 const updateCM = () => {
   extensions = [
@@ -136,6 +176,17 @@ watch(localSelectedLanguage, () => {
 
 watch(localCode, () => {
   emit('update:code', localCode.value);
+});
+
+onMounted(() => {
+  const editorInstance = new EditorView({
+    state: EditorState.create({
+      doc: localCode.value,
+      extensions,
+    }),
+    parent: document.querySelector('.editor')!,
+  });
+  initializeShareDB(editorInstance);
 });
 </script>
 
