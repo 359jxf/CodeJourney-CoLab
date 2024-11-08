@@ -122,6 +122,10 @@
     transition: background 0.2s ease;
   }
 
+  .wrapper {
+    margin-top: 50px;
+  }
+  
   .container {
     display: flex;
     justify-content: center;

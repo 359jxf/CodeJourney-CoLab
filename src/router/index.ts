@@ -3,6 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 // 定义路由组件
 const Home = () => import('../views/Home.vue');
 const About = () => import('../views/About.vue');
+const AboutAlgorithm = () => import('../views/AboutAlgorithm.vue');
 const Login = () => import('../views/Login.vue');
 const Register = () => import('../views/Register.vue');
 const BaseCode = () => import('../views/CodeEditor.vue');
@@ -20,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/about',
     name: 'About',
     component: About
+  },
+  {
+    path: '/aboutalgorithm',
+    name: 'AboutAlgorithm',
+    component: AboutAlgorithm
   },
   {
     path: '/login',

@@ -80,6 +80,7 @@ body {
   }
 
 .wrapper {
+  margin-top: 50px;
   display: flex;
   flex-direction: column;
   justify-content: center; /* 水平居中 */

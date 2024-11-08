@@ -53,9 +53,9 @@ import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
+import { EditorState } from "@codemirror/state";
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { Connection } from 'sharedb/lib/client';
-
 // Props 接收从父组件传递过来的数据
 const props = defineProps<{ 
   code: string;
@@ -77,6 +77,7 @@ const localCode = ref(props.code);  // 代码
 const localSelectedLanguage = ref(props.selectedLanguage);  // 选择的语言
 const selectedTheme = ref<string>("oneDark");  // 默认主题
 const editorKey = ref(0);  // 用于强制重新渲染编辑器
+const editorInstance = ref(null); // 保存编辑器实例
 
 // 语言和主题的选择项
 const languageOptions = [
@@ -121,43 +122,6 @@ const themeExtensions: Record<string, any> = {
   }),
 };
 
-// ShareDB 集成到 CodeMirror 的逻辑
-const initializeShareDB = () => {
-  const socket = new ReconnectingWebSocket(`ws://${window.location.host}/ws`, [], {
-    maxEnqueuedMessages: 0
-  });
-  const connection = new Connection(socket);
-  const doc = connection.get('examples', 'codemirror-doc');
-
-  doc.subscribe((error:unknown) => {
-    if (error) {
-      console.error('文档订阅出错:', error);
-      return;
-    }
-    // 如果文档为空，创建一个新的文档
-    if (!doc.type) {
-      doc.create({ content: '' }, (error:unknown) => {
-        if (error) console.error('创建文档出错:', error);
-      });
-    } else {
-      localCode.value = doc.data.content; // 加载文档内容到编辑器
-    }
-
-    // 监听 CodeMirror 内容变化，并提交更改到 ShareDB
-    watch(localCode, (newValue, oldValue) => {
-      if (newValue !== oldValue) {
-        doc.submitOp([{ p: ['content'], oi: newValue, od: oldValue }]);
-      }
-    });
-
-    // 监听 ShareDB 文档操作，并更新 CodeMirror 编辑器内容
-    doc.on('op', (op:any) => {
-      if (op[0].p[0] === 'content') {
-        localCode.value = doc.data.content;
-      }
-    });
-  });
-};
 
 // 更新 CodeMirror 的扩展
 const updateCM = () => {
@@ -178,15 +142,44 @@ watch(localCode, () => {
   emit('update:code', localCode.value);
 });
 
-onMounted(() => {
-  const editorInstance = new EditorView({
-    state: EditorState.create({
-      doc: localCode.value,
-      extensions,
-    }),
-    parent: document.querySelector('.editor')!,
+// 初始化 ShareDB 文档连接
+const initializeShareDB = () => {
+  const socket = new ReconnectingWebSocket(`ws://${window.location.host}/ws`);
+  const connection = new Connection(socket);
+  const doc = connection.get('examples', 'shared-editor');
+
+  // 订阅文档的初始内容
+  doc.subscribe((error:unknown) => {
+    if (error) {
+      console.error('文档订阅出错:', error);
+      return;
+    }
+
+    // 如果文档未创建，初始化内容为空字符串
+    if (!doc.type) {
+      doc.create({ content: '' }, 'json0');
+    } else {
+      localCode.value = doc.data.content;
+    }
   });
-  initializeShareDB(editorInstance);
+
+  // 当文档内容变化时，将变化应用到 CodeMirror 实例中
+  doc.on('op', (op:any) => {
+    const content = doc.data.content;
+    localCode.value = content;
+  });
+
+  // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
+  watch(localCode, (newContent) => {
+    if (doc.data.content !== newContent) {
+      doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
+    }
+  });
+};
+
+// 在组件挂载后初始化编辑器和 ShareDB
+onMounted(() => {
+  initializeShareDB();
 });
 </script>
 
