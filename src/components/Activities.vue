@@ -1,141 +1,158 @@
 <template>
-    <div class="card-container">
-      <!-- 上部：标题部分 -->
-      <div class="card-header">
-        <h2>Latest Works</h2>
+    <div class="wrapper-2">
+      <div class="title">
+        <h2>Practice Record</h2>
       </div>
-      
-      <!-- 中部：按钮部分 -->
-      <div class="tab-buttons">
-        <button 
-          v-for="tab in tabs" 
-          :key="tab" 
-          @click="activeTab = tab"
-          :class="{ active: activeTab === tab }"
-          :style="getButtonStyle(tab)"
-        >
-          {{ tab }}
-        </button>
-      </div>
-      
-      <!-- 下部：表格部分 -->
-      <div class="table-container">
-        <el-table :data="filteredActivities" style="width: 100%">
-          <el-table-column label="#" width="50">
-            <template #default="scope">{{ scope.$index + 1 }}</template>
+      <div class="table">
+        <el-table :data="filterTableData" :border="parentBorder" height="340" style="width: 100%">
+          <el-table-column type="expand">
+            <template #default="props">
+              <div m="4">
+                <el-table :data="props.row.record" :border="childBorder">
+                  <el-table-column label="Date" prop="date" />
+                  <el-table-column
+                    prop="result"
+                    label="Result"
+                    >
+                      <template #default="scope">
+                        <el-tag
+                        :type="scope.row.result === 'correct' ? 'success' : 'danger' "
+                        disable-transitions
+                        >{{ scope.row.result }}</el-tag
+                        >
+                      </template>
+                  </el-table-column>
+                  <el-table-column label="Language" prop="language" />
+                  <el-table-column align="right">
+                    <template #default="scope">
+                      <el-button type="primary" text="true" size="small" @click="handleMore(scope.$index, scope.row)">
+                        More
+                      </el-button>
+                    </template>
+                  </el-table-column>
+                </el-table>
+              </div>
+            </template>
           </el-table-column>
-          <el-table-column prop="description" label="Description"></el-table-column>
-          <el-table-column prop="date" label="Date" width="120"></el-table-column>
+          <el-table-column
+            prop="status"
+            label="Status"
+            width="100"
+            >
+              <template #default="scope">
+                <el-tag
+                :type="scope.row.status === 'passed' ? 'success' : 'danger' "
+                disable-transitions
+                >{{ scope.row.status }}</el-tag
+                >
+              </template>
+          </el-table-column>
+            
+          <el-table-column label="Title" prop="title" />
+          <el-table-column
+            prop="tag"
+            label="Tag"
+            width="100"
+            >
+              <template #default="scope">
+                <el-tag
+                :type="scope.row.tag === 'hard' ? 'warning' : (scope.row.tag === 'moderate' ? 'primary' : 'success')"
+                disable-transitions
+                >{{ scope.row.tag }}</el-tag
+                >
+              </template>
+            </el-table-column>
+
+          <el-table-column align="right">
+            <template #header>
+              <el-input v-model="search" size="small" placeholder="Type to search" />
+            </template>
+          </el-table-column>
         </el-table>
       </div>
     </div>
   </template>
   
-  <script setup lang="ts">
-  import { ref, computed } from 'vue';
-  import { defineProps } from 'vue';
-  const props = defineProps<{
-    color: string; // 卡片颜色
-    textColor: string; // 普通文字颜色
-  }>();
+  <script lang="ts" setup>
+  import { computed, ref } from 'vue'
+  import { useRouter } from 'vue-router'
 
-  // 定义标签和活动数据
-  const tabs = ['Practices', 'Projects', 'Competitions'];
-  const activeTab = ref(tabs[0]);
+  const router = useRouter()
+  const parentBorder = ref(false)
+  const childBorder = ref(false)
+  
+  interface User {
+    status: string
+    title: string
+    tag: string
+    record: object
+  }
+  
+  const search = ref('')
+  
+  const filterTableData = computed(() =>
+    tableData.filter(
+      (data) =>
+        !search.value ||
+        data.title.toLowerCase().includes(search.value.toLowerCase())
+    )
+  )
 
-  // 获取按钮样式的方法
-    const getButtonStyle = (tab) => {
-    if (activeTab.value === tab) {
-        // 如果按钮被选中，使用 Props 中的颜色和文字颜色
-        return {
-        backgroundColor: props.color,
-        color: props.textColor,
-        };
-    }
-    // 如果按钮未被选中，返回默认样式
-    return {};
-    };
+  const handleMore = (index: number, row: User) => {
+    router.push('/normalOJ')
+  }
   
-  // 活动数据，假设包含了各个标签的数据
-  const activities = ref([
-    { tab: 'Practices', description: 'Add two numbers', date: '2024/10/31' },
-    { tab: 'Practices', description: 'Add two matrix', date: '2024/10/31' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-  ]);
-  
-  // 过滤活动数据，基于当前选中的标签
-  const filteredActivities = computed(() =>
-    activities.value.filter(activity => activity.tab === activeTab.value)
-  );
+  const tableData: User[] = [
+    {
+      status: 'failed',
+      title: 'No. 182',
+      tag: 'moderate',
+      record: [
+        {
+          date: '2022-11-11',
+          result: 'wrong answer',
+          language: 'python',
+        },
+        {
+          date: '2022-11-11',
+          result: 'wrong answer',
+          language: 'python',
+        },
+      ]
+    },
+    {
+      status: 'passed',
+      title: 'No. 121',
+      tag: 'easy',
+      record: [
+        {
+          date: '2022-11-10',
+          result: 'correct',
+          language: 'python',
+        }
+      ]
+    },
+  ]
   </script>
   
+  
   <style scoped>
-  .card-container {
-    width: 700px;
-    margin: 20px auto;
-    background-color: #ffffff;
+  
+  .wrapper-2 {
+    height: 430px;
+    padding: 10px;
+    background-color: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
   }
-  
-  .card-header {
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+
+  .title h2 {
+    padding-bottom: 15px;
+    color: #5d5d5d;
+    border-bottom:1px solid #cccccc;
   }
-  
-  .card-header h2 {
-    font-size: 18px;
-    color: #BABABA;
-    font-weight: bold;
-    margin: 0;
-  }
-  
-  .tab-buttons {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 15px;
-  }
-  
-  .tab-buttons button {
-    background: none;
-    border: none;
-    font-size: 16px;
-    padding: 8px 15px;
-    cursor: pointer;
-    color: #888888;
-    transition: color 0.3s, background-color 0.3s;
-  }
-  
-  .tab-buttons button.active {
-    color: #ffffff;
-    background-color: #3f51b5;
-    border-radius: 5px;
-  }
-  
-  .tab-buttons button:not(.active):hover {
-    color: #3f51b5;
-  }
-  
-  .table-container {
-    max-width: 100%;
+
+  .table {
+    /* height: 300px;
+    overflow-y: scroll; */
   }
   </style>
-  

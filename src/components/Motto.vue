@@ -17,16 +17,15 @@
   
       <!-- 编辑弹窗 -->
       <el-dialog
-        title="编辑格言"
+        title="Edit Motto"
         v-model="isDialogVisible"
         width="30%"
-        :before-close="handleClose"
       >
-        <el-input v-model="newMotto" placeholder="请输入新的格言"></el-input>
+        <el-input v-model="newMotto" placeholder="Tpye your favorite motto here:"></el-input>
         <template #footer>
           <div class="dialog-footer">
-            <el-button @click="isDialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="updateMotto">保存</el-button>
+            <el-button @click="isDialogVisible = false">cancel</el-button>
+            <el-button type="primary" @click="updateMotto">save</el-button>
           </div>
         </template>
       </el-dialog>
@@ -60,17 +59,7 @@
     emit('update:motto', newMotto.value); // 触发更新事件
     isDialogVisible.value = false;
   };
-  
-  // 弹窗关闭前的确认逻辑
-  const handleClose = (done: () => void) => {
-    ElMessageBox.confirm('确认关闭吗？')
-      .then(() => {
-        done(); // 用户确认关闭
-      })
-      .catch(() => {
-        // 用户取消关闭
-      });
-  };
+
   </script>
   
   <style scoped>

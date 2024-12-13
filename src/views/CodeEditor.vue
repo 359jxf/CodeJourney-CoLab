@@ -28,14 +28,14 @@
           textColor=var(--color)
         />
       </div>
-      <div class="chat-section">
+      <!-- <div class="chat-section">
         <ChatApp
           height= "770px"
           width="300px"
           color=var(--primary-color)
           textColor=var(--color)
         />
-      </div>
+      </div> -->
     </div>
   </div>
   <ThemeSelector :initialTheme="currentTheme" />
@@ -48,7 +48,7 @@ import CodeRunner from '../components/CodeRunner.vue'; // 导入 CodeRunner 组�
 import ThemeSelector from '../components/BackgroundTheme.vue';
 import StickyNavbar from '../components/Navbar.vue';
 import UserList from '../components/PeopleList.vue';
-import ChatApp from '../components/ChatApp.vue';
+// import ChatApp from '../components/ChatApp.vue';
 
 // 定义当前主题
 const currentTheme = ref({

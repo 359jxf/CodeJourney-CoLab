@@ -54,8 +54,8 @@
   // 导航链接数据
   const links = [
     { label: 'Home', path: '/' },
-    { label: 'Online-Coding', path: '/basecode' },
-    { label: 'Practices', path: '/normalOJ' },
+    { label: 'Online-Coding', path: '/editlist' },
+    { label: 'Practices', path: '/problemlist' },
     {
       label: 'About-Us',
       path: '/about',

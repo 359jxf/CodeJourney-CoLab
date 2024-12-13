@@ -4,90 +4,94 @@
     highlightColor=var(--primary-color)
     />
     <ThemeSelector :initialTheme="currentTheme" />
-    <div class="user-card-container">
-      <UserCard 
-      :user="user"
-      :activeSection="activeSection"
-      @update:activeSection="setActiveSection"
-      color=var(--primary-color)
-      textColor=var(--color)
-    />
-    </div>
-    <div class="motto-container">
-      <Motto :motto="userMotto"
-      color=var(--primary-color)
-      textColor=var(--color)
-      iconColor=var(--color)
-      @update:motto="updateUserMotto" />
-    </div>
-
-    <div class="content-section">
-      <div v-if="activeSection === 'profile'">
-      <el-card class="profile-card">
-        <!-- 头像和编辑图标 -->
-        <div class="profile-avatar">
-          <img src="/avatar.png" alt="Avatar" class="avatar" />
-          <img src="/edit_icon.svg" alt="Edit Icon" class="edit-icon" @click="toggleEdit" />
-        </div>
-
-        <!-- 个人信息输入表单 -->
-        <div class="profile-info">
-          <div class="info-item">
-            <span class="label">Nickname:</span>
-            <el-input v-model="user.name" :disabled="!isEditing" placeholder="Enter your nickname" class="input"></el-input>
-          </div>
-          
-          <div class="info-item">
-            <span class="label">Gender:</span>
-            <el-radio-group v-model="user.gender" size="small" :disabled="!isEditing" class="gender-group">
-              <el-radio-button label="male" class="gender-radio male">Male</el-radio-button>
-              <el-radio-button label="female" class="gender-radio female">Female</el-radio-button>
-            </el-radio-group>
-          </div>
-          
-          <div class="info-item">
-            <span class="label">Birthday:</span>
-             <!-- 使用 el-date-picker 并添加自定义图标 -->
-              <el-date-picker
-                v-model="user.birthday"
-                type="date"
-                :disabled="!isEditing"
-                placeholder="Select birthday"
-                class="input date-picker"
-              ></el-date-picker>
-          </div>
-
-          <div class="info-item">
-            <span class="label">School:</span>
-            <el-input v-model="user.school" :disabled="!isEditing" placeholder="Enter your school" class="input"></el-input>
-          </div>
-
-          <div class="info-item">
-            <span class="label">Github:</span>
-            <el-input v-model="user.github" :disabled="!isEditing" placeholder="Enter your Github URL" class="input"></el-input>
-          </div>
-
-          <!-- 保存按钮 -->
-          <el-button v-if="isEditing" type="primary" @click="saveChanges" class="save-button">Save</el-button>
-        </div>
-      </el-card>
-    </div>
-      <div v-else-if="activeSection === 'activity'">
-        <div class="radar-chart-container">
-          <RadarChart
+    <div class="wrapper">
+      <div class="wrapper-left">
+        <UserCard 
+        :user="user"
+        :activeSection="activeSection"
+        @update:activeSection="setActiveSection"
+        color=var(--primary-color)
+        textColor=var(--color)
+        />
+      </div>
+      <div class="wrapper-right">
+        <div class="motto-container">
+          <Motto :motto="userMotto"
           color=var(--primary-color)
-           />
+          textColor=var(--color)
+          iconColor=var(--color)
+          @update:motto="updateUserMotto" />
         </div>
-        <div class="calendar-container">
-          <Calendar
-          color=var(--primary-color)
-          textColor=var(--color)   />
-        </div>  
-        <div class="activities-container">
-          <ActivityCard
-            color=var(--primary-color)
-            textColor=var(--color)
-           />
+
+        <div class="content-section">
+          <div v-if="activeSection === 'profile'">
+            <el-card class="profile-card">
+              <!-- 头像和编辑图标 -->
+              <div class="profile-avatar">
+                <img src="/avatar.png" alt="Avatar" class="avatar" />
+                <el-icon class="edit-icon" @click="toggleEdit"><Edit /></el-icon>
+              </div>
+
+              <!-- 个人信息输入表单 -->
+              <div class="profile-info">
+                <div class="info-item">
+                  <span class="label">Nickname:</span>
+                  <el-input v-model="user.name" :disabled="!isEditing" placeholder="Enter your nickname" class="input"></el-input>
+                </div>
+              
+                <div class="info-item">
+                  <span class="label">Gender:</span>
+                  <el-radio-group v-model="user.gender" size="small" :disabled="!isEditing" class="gender-group">
+                    <el-radio-button label="male" class="gender-radio male">Male</el-radio-button>
+                    <el-radio-button label="female" class="gender-radio female">Female</el-radio-button>
+                  </el-radio-group>
+                </div>
+              
+                <div class="info-item">
+                  <span class="label">Birthday:</span>
+                  <!-- 使用 el-date-picker 并添加自定义图标 -->
+                    <el-date-picker
+                      v-model="user.birthday"
+                      type="date"
+                      :disabled="!isEditing"
+                      placeholder="Select birthday"
+                      class="input date-picker"
+                    ></el-date-picker>
+                </div>
+
+                <div class="info-item">
+                  <span class="label">School:</span>
+                  <el-input v-model="user.school" :disabled="!isEditing" placeholder="Enter your school" class="input"></el-input>
+                </div>
+
+                <div class="info-item">
+                  <span class="label">Github:</span>
+                  <el-input v-model="user.github" :disabled="!isEditing" placeholder="Enter your Github URL" class="input"></el-input>
+                </div>
+
+                <!-- 保存按钮 -->
+                <el-button v-if="isEditing" type="primary" @click="saveChanges" class="save-button">Save</el-button>
+              </div>
+            </el-card>
+          </div>
+          <div v-else-if="activeSection === 'activity'">
+            <!-- <div class="radar-chart-container">
+              <RadarChart
+              color=var(--primary-color)
+              />
+            </div>
+            <div class="calendar-container">
+              <Calendar
+              color=var(--primary-color)
+              textColor=var(--color)   />
+            </div>   -->
+            <div class="activities-container">
+              <ActivityCard
+                color=var(--primary-color)
+                textColor=var(--color)
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -101,9 +105,9 @@
   import Motto from '../components/Motto.vue';
   import RadarChart from '../components/RadarChart.vue';
   import Calendar from '../components/Calendar.vue';
-
+  import { Edit } from '@element-plus/icons-vue'
   import ActivityCard from '../components/Activities.vue';
-  import { ElCard, ElTable, ElTableColumn } from 'element-plus';
+  import { ElCard } from 'element-plus';
   
   // 定义当前主题
   const currentTheme = ref({
@@ -129,16 +133,7 @@
   // 更新用户格言
   const updateUserMotto = (newMotto: string) => {
       userMotto.value = newMotto;
-      console.log("格言已更新为:", newMotto);
     };
-
-  
-  // 定义活动数据
-  const activities = ref([
-    { date: '2023-01-01', description: 'Completed task A' },
-    { date: '2023-01-02', description: 'Started project B' },
-    { date: '2023-01-03', description: 'Updated profile' },
-  ]);
 
   // 定义当前激活的展示内容
   const activeSection = ref('profile');
@@ -171,31 +166,33 @@
   }
   
   body {
-      margin: 0;
-      box-sizing: border-box;
-      font-family: "poppins", sans-serif;
-      background: var(--background);
-      color: var(--color);
-      letter-spacing: 1px;
-      transition: background 0.2s ease;
-    }
-  
-  .user-card {
-    position: absolute;
-    top: 100px; /* 距离顶部 20px，可以根据需要调整 */
-    left: 250px; /* 距离左侧 20px，可以根据需要调整 */
+    margin: 0;
+    box-sizing: border-box;
+    font-family: "poppins", sans-serif;
+    background: var(--background);
+    color: var(--color);
+    letter-spacing: 1px;
+    transition: background 0.2s ease;
   }
+
+  .wrapper {
+    margin: 11vh 12vw 7vh 12vw;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    gap: 5mm;
+  }
+
+  .wrapper-right {
+    display: flex;
+    flex-direction: column;
+  }
+
   .motto-container {
-    position: absolute;
-    top: 100px; /* 距离顶部 20px，可以根据需要调整 */
-    left: 600px; /* 距离左侧 20px，可以根据需要调整 */
   }
   .content-section{
-    position: absolute;
-    top:250px;
-    left:600px;
-    
   }
+
 .profile-card {
   width: 650px;
   padding: 30px;
@@ -224,7 +221,7 @@
   right: calc(50% - 60px);
   width: 30px;
   height: 30px;
-  background-color: #3f51b5;
+  background-color: var(--primary-color);
   border-radius: 50%;
   padding: 5px;
   cursor: pointer;
@@ -276,47 +273,14 @@
   border:none;
 }
 
-.el-input__inner,
-.el-date-editor .el-input__inner {
-  background-color: #f5f5f5;
-  border: none;
-  border-radius: 5px;
-  color: #787676;
-  width: 100%;
-  padding-right: 30px; /* 右边留空给日历图标 */
-}
-
-.el-radio-button__inner {
-  background-color: #ececec;
-  color: #626262;
-  border-radius: 5px;
-}
-
-.el-radio-button__inner.is-active {
-  background-color: #9299c2;
-  color: #fff;
-}
-
-
 .save-button {
   margin-top: 20px;
   align-self: flex-end;
 }
+
 .radar-chart-container {
-  position: relative;
-    top: -10px;
-    left: -95px;  
 }
 .calendar-container {
-  position: relative;
-    top: -160px;
-    left: 180px;
 }
-.activities-container {
-  position: relative;
-    top: -320px;
-    left: -9px;
-}
-
 
   </style>

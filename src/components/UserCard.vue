@@ -44,13 +44,13 @@
       </div>
 
        <!-- 编辑邮箱弹窗 -->
-       <el-dialog title="修改邮箱地址" v-model="isDialogVisible">
-        <el-input v-model="email" placeholder="请输入新的邮箱地址"></el-input>
+       <el-dialog title="Change email" v-model="isDialogVisible">
+        <el-input v-model="email" placeholder="Please input new email address"></el-input>
         <!-- 底部按钮区域 -->
         <template #footer>
         <div class="dialog-footer">
-            <el-button @click="isDialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="updateEmail">确认</el-button>
+            <el-button @click="isDialogVisible = false">cancel</el-button>
+            <el-button type="primary" @click="updateEmail">save</el-button>
         </div>
         </template>
         </el-dialog>
@@ -83,7 +83,6 @@
   };
   
     const openEditDialog = () => {
-        console.log("打开弹窗"); // 调试信息，确认函数是否被触发
         isDialogVisible.value = true;
         console.log("isDialogVisible:", isDialogVisible.value); // 调试输出
     };
@@ -91,7 +90,6 @@
     const updateEmail = () => {
         isDialogVisible.value = false;
         // 这里可以添加保存新邮箱的逻辑，比如调用API更新数据
-        console.log("新邮箱地址：", email.value);
     };
   </script>
   

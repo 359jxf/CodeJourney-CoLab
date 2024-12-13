@@ -6,7 +6,9 @@ const About = () => import('../views/About.vue');
 const AboutAlgorithm = () => import('../views/AboutAlgorithm.vue');
 const Login = () => import('../views/Login.vue');
 const Register = () => import('../views/Register.vue');
+const EditList = () => import('../views/EditList.vue');
 const BaseCode = () => import('../views/CodeEditor.vue');
+const ProblemList = () => import('../views/ProblemList.vue');
 const NormalOJ = () => import('../views/NormalOJ.vue');
 const MyProfile = () => import('../views/MyProfile.vue');
 
@@ -41,6 +43,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/basecode',
     name: 'BaseCode',
     component: BaseCode
+  },
+  {
+    path: '/editlist',
+    name: 'EditList',
+    component: EditList
+  },
+  {
+    path: '/problemlist',
+    name: 'ProblemList',
+    component: ProblemList
   },
   {
     path: '/normalOJ',
