@@ -6,7 +6,7 @@
           <img src="/avatar.png" alt="Avatar" />
         </div>
         <div class="info-item">
-          <span class="name" :style="{ color: textColor }">Smith</span>
+          <span class="name" :style="{ color: textColor } " >{{ name }}</span>
         </div>
         <div class="info-item email-container">
           <span class="email" :style="{ color: textColor }">Email:{{ email }}</span>
@@ -59,14 +59,15 @@
   
   <script lang="ts" setup>
   import { defineProps, defineEmits,ref } from 'vue';
-  import { ElMessageBox } from 'element-plus';
   import { ElCard, ElButton, ElDialog, ElInput } from 'element-plus';
   import { User, Clock,Edit } from '@element-plus/icons-vue';
+  import axios from 'axios';
+  import { ElMessage } from 'element-plus';
   
   const props = defineProps<{
     user: {
-      name: string;
-      email: string;
+      name: string | null;
+      email: string | null;
     };
     activeSection: string;
     color: string; // 卡片颜色
@@ -75,6 +76,7 @@
   
   const emit = defineEmits(['update:activeSection']);
   
+  const name = ref(props.user.name);
   const email = ref(props.user.email);
   const isDialogVisible = ref(false);
 
@@ -87,10 +89,73 @@
         console.log("isDialogVisible:", isDialogVisible.value); // 调试输出
     };
 
-    const updateEmail = () => {
-        isDialogVisible.value = false;
-        // 这里可以添加保存新邮箱的逻辑，比如调用API更新数据
-    };
+    const updateEmail = async () => {
+    try {
+      isDialogVisible.value = false;
+      
+      const response = await axios.post(
+        'http://localhost:8048/account/editinfo',
+        {
+          // 请求体的内容
+          username: localStorage.getItem('username'),
+          email: email.value
+        },
+        {
+          // 请求头部分
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json', 
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        const token = response.data;
+
+        localStorage.setItem('useremail', email.value?? ''); 
+        ElMessage({
+          message: 'your change is reserved.',
+          type: 'success',
+          duration: 3000, 
+        })
+
+      } else {
+        console.error('Edit failed:', response.data);
+        ElMessage({
+          message: 'Edit failed!',
+          type: 'error',
+          duration: 3000, 
+        })
+      }
+    } catch (error:any) {
+      if (error.response) {
+        // 这是 Axios 处理的响应错误
+        console.log('Response error:', error.response);
+        ElMessage({
+          message: error.response.data|| 'An error occurred during edit.',
+          type: 'error',
+          duration: 3000, 
+        })
+      } else if (error.request) {
+        // 请求已发送，但没有收到响应
+        console.log('Request error:', error.request);
+        ElMessage({
+          message: 'No response from server.',
+          type: 'error',
+          duration: 3000, 
+        })
+      } else {
+        // 其他错误
+        console.log('Other error:', error.message);
+        ElMessage({
+          message: 'An unknown error occurred.',
+          type: 'error',
+          duration: 3000, 
+        })
+      }
+    }
+  };
+
   </script>
   
   <style scoped>

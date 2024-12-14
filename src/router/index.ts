@@ -42,12 +42,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/basecode',
     name: 'BaseCode',
-    component: BaseCode
+    component: BaseCode,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/editlist',
     name: 'EditList',
-    component: EditList
+    component: EditList,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/problemlist',
@@ -57,19 +59,39 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/normalOJ',
     name: 'NormalOJ',
-    component: NormalOJ
+    component: NormalOJ,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/profile',
     name: 'MyProfile',
-    component: MyProfile
+    component: MyProfile,
+    meta: { requiresAuth: true } 
   }
 ];
 
 // 创建路由实例
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes
+});
+
+// 全局路由守卫
+router.beforeEach((to, from, next) => {
+  // 检查路由是否需要登录
+  if (to.meta.requiresAuth) {
+    const isLoggedIn = localStorage.getItem('token'); // 检查本地存储中的 token
+    if (!isLoggedIn) {
+      // 如果没有登录，跳转到登录页面
+      next('/login');
+    } else {
+      // 如果已登录，继续导航
+      next();
+    }
+  } else {
+    // 如果不需要登录，直接继续导航
+    next();
+  }
 });
 
 export default router;

@@ -13,7 +13,28 @@
         color=var(--primary-color)
         textColor=var(--color)
         />
+        <div>I want to
+          <el-button
+            type="primary"
+            @click="dialogVisible = true"
+            link
+          >
+            logout
+          </el-button>
+        </div>
+        <el-dialog
+          title="Confirm Logout"
+           v-model="dialogVisible"
+          width="30%"
+        >
+          <p>Are you sure you want to log out?</p>
+          <span slot="footer" class="dialog-footer">
+            <el-button @click="dialogVisible = false">Cancel</el-button>
+            <el-button type="primary" @click="logout">Confirm</el-button>
+          </span>
+        </el-dialog>
       </div>
+
       <div class="wrapper-right">
         <div class="motto-container">
           <Motto :motto="userMotto"
@@ -36,12 +57,12 @@
               <div class="profile-info">
                 <div class="info-item">
                   <span class="label">Nickname:</span>
-                  <el-input v-model="user.name" :disabled="!isEditing" placeholder="Enter your nickname" class="input"></el-input>
+                  <el-input v-model="user.nickname" :disabled="!isEditing" placeholder="Enter your nickname" class="input"></el-input>
                 </div>
-              
+                <!-- :disabled="!isEditing" -->
                 <div class="info-item">
                   <span class="label">Gender:</span>
-                  <el-radio-group v-model="user.gender" size="small" :disabled="!isEditing" class="gender-group">
+                  <el-radio-group v-model="user.gender" size="small" :disabled="true" class="gender-group">
                     <el-radio-button label="male" class="gender-radio male">Male</el-radio-button>
                     <el-radio-button label="female" class="gender-radio female">Female</el-radio-button>
                   </el-radio-group>
@@ -53,7 +74,7 @@
                     <el-date-picker
                       v-model="user.birthday"
                       type="date"
-                      :disabled="!isEditing"
+                      :disabled="true"
                       placeholder="Select birthday"
                       class="input date-picker"
                     ></el-date-picker>
@@ -61,12 +82,12 @@
 
                 <div class="info-item">
                   <span class="label">School:</span>
-                  <el-input v-model="user.school" :disabled="!isEditing" placeholder="Enter your school" class="input"></el-input>
+                  <el-input v-model="user.school" :disabled="true" placeholder="Enter your school" class="input"></el-input>
                 </div>
 
                 <div class="info-item">
                   <span class="label">Github:</span>
-                  <el-input v-model="user.github" :disabled="!isEditing" placeholder="Enter your Github URL" class="input"></el-input>
+                  <el-input v-model="user.github" :disabled="true" placeholder="Enter your Github URL" class="input"></el-input>
                 </div>
 
                 <!-- 保存按钮 -->
@@ -98,7 +119,7 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import ThemeSelector from '../components/BackgroundTheme.vue';
   import StickyNavbar from '../components/Navbar.vue';
   import UserCard from '../components/UserCard.vue';
@@ -108,7 +129,11 @@
   import { Edit } from '@element-plus/icons-vue'
   import ActivityCard from '../components/Activities.vue';
   import { ElCard } from 'element-plus';
-  
+  import axios from 'axios';
+  import { ElMessage, ElDialog, ElButton } from 'element-plus';
+
+  const dialogVisible = ref(false) // 控制弹窗是否显示
+
   // 定义当前主题
   const currentTheme = ref({
     background: '#1A1A2E',
@@ -118,9 +143,9 @@
   
   // 定义用户信息
   const user = ref({
-    name: 'Smith',
-    email: '123456@qq.com',
-    nickname: 'Smithy',
+    name: localStorage.getItem('username'),
+    email: localStorage.getItem('useremail'),
+    nickname: localStorage.getItem('username'),
     gender: 'male',
     birthday: '2000-01-01',
     school: 'Tongji University',
@@ -146,16 +171,126 @@
   };
 
   // 保存更改
-  const saveChanges = () => {
-    isEditing.value = false;
-    console.log("Saved user data:", user.value);
-    // 在此处可以调用API将数据发送到服务器
+  const saveChanges = async () => {
+    try {
+      isEditing.value = false;
+      
+      const response = await axios.post(
+        'http://localhost:8048/account/editinfo',
+        {
+          // 请求体的内容
+          username: user.value.nickname,
+          email: localStorage.getItem('useremail')
+        },
+        {
+          // 请求头部分
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json', // 确保内容类型是 JSON
+          }
+        }
+      );
+
+      if (response.status === 200) {
+        const token = response.data;
+
+        localStorage.setItem('username', user.value.nickname ?? 'No nickname'); 
+        ElMessage({
+          message: 'your change is reserved.',
+          type: 'success',
+          duration: 3000, 
+        })
+
+      } else {
+        console.error('Edit failed:', response.data);
+        ElMessage({
+          message: 'Edit failed!',
+          type: 'error',
+          duration: 3000, 
+        })
+      }
+    } catch (error:any) {
+      if (error.response) {
+        // 这是 Axios 处理的响应错误
+        console.log('Response error:', error.response);
+        ElMessage({
+          message: error.response.data|| 'An error occurred during edit.',
+          type: 'error',
+          duration: 3000, 
+        })
+      } else if (error.request) {
+        // 请求已发送，但没有收到响应
+        console.log('Request error:', error.request);
+        ElMessage({
+          message: 'No response from server.',
+          type: 'error',
+          duration: 3000, 
+        })
+      } else {
+        // 其他错误
+        console.log('Other error:', error.message);
+        ElMessage({
+          message: 'An unknown error occurred.',
+          type: 'error',
+          duration: 3000, 
+        })
+      }
+    }
   };
 
   // 设置当前激活的展示内容
   const setActiveSection = (section: string) => {
     activeSection.value = section;
   };
+
+  
+
+  // 退出登录
+  const logout = async () => {
+    try {
+      console.log('logout triggered');
+      // 调用后端登出 API
+      const response = await axios.get('http://localhost:8048/account/logout',  {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      if (response.status === 200) {
+        // 登出成功，清除本地存储的用户信息
+        localStorage.removeItem('token');
+        localStorage.removeItem('username');
+        localStorage.removeItem('useremail');
+
+        ElMessage({
+          message: 'Logged out successfully!',
+          type: 'success',
+          duration: 3000
+        });
+
+        // 跳转到登录页
+        window.location.href = '/login';  
+      } else {
+        ElMessage({
+          message: 'Logout failed, please try again.',
+          type: 'error',
+          duration: 3000
+        });
+      }
+
+    } catch (error) {
+      console.error('Logout failed:', error);
+      ElMessage({
+        message: 'An error occurred during logout.',
+        type: 'error',
+        duration: 3000
+      });
+    } finally {
+      // 关闭弹窗
+      dialogVisible.value = false;
+    }
+  };
+
   </script>
   
   <style>
@@ -181,6 +316,16 @@
     justify-content: center;
     align-items: start;
     gap: 5mm;
+  }
+
+  .wrapper-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .wrapper-left div {
+    font-size: 13px;
   }
 
   .wrapper-right {

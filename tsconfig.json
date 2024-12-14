@@ -7,7 +7,10 @@
     "paths": {
       "@/*": ["src/*"],
       "@codemirror/state": ["./node_modules/@codemirror/state"]
-    }
+    },
+    "skipLibCheck": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["axios", "node"],
   },
   "include": ["src/**/*"]
 }
