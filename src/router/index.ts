@@ -11,6 +11,7 @@ const BaseCode = () => import('../views/CodeEditor.vue');
 const ProblemList = () => import('../views/ProblemList.vue');
 const NormalOJ = () => import('../views/NormalOJ.vue');
 const MyProfile = () => import('../views/MyProfile.vue');
+const SubmissionDetail = () => import('../views/SubmissionDetail.vue');
 
 // 定义路由
 const routes: Array<RouteRecordRaw> = [
@@ -43,7 +44,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/basecode',
     name: 'BaseCode',
     component: BaseCode,
-    meta: { requiresAuth: true } 
+    // meta: { requiresAuth: true } 
   },
   {
     path: '/editlist',
@@ -54,7 +55,8 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/problemlist',
     name: 'ProblemList',
-    component: ProblemList
+    component: ProblemList,
+    meta: { requiresAuth: true } 
   },
   {
     path: '/normalOJ',
@@ -66,6 +68,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/profile',
     name: 'MyProfile',
     component: MyProfile,
+    meta: { requiresAuth: true } 
+  },
+  {
+    path: '/submissiondetail',
+    name: 'SubmissionDetail',
+    component: SubmissionDetail,
     meta: { requiresAuth: true } 
   }
 ];

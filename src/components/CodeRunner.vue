@@ -1,22 +1,23 @@
 <template>
   <div class="container">
     <div class="btn">
-      <el-button @click="runCode" :style="{backgroundColor: props.color,color:props.textColor} ">Run</el-button>
+      <el-button @click="runCode" type="primary">Run</el-button>
     </div>
-    <el-tabs type="border-card" :style="{ width: props.width, height: props.height, borderBottomLeftRadius: '10px', borderBottomRightRadius: '10px'}">
+    <el-tabs class="demo-tabs" :style="{ width: props.width, height: props.height}">
       <!-- 参数输入 -->
       <el-tab-pane label="input">
         <el-input
           id="parameters"
+          type="textarea"
           v-model="parameters"
           placeholder="parameters..."
-          style="margin-top: 10px; width: 100%; height: 100px;"
+          style="margin-top: 10px; width: 100%; height: 100%;"
         />
       </el-tab-pane>
 
       <!-- 显示结果 -->
       <el-tab-pane label="output">
-        <div>
+        <div class="result-container">
           <pre style="color: 616161;">{{ result }}</pre>
         </div>
       </el-tab-pane>
@@ -33,8 +34,6 @@ const props = defineProps<{
   selectedLanguage: string;
   height:string;
   width:string;
-  color: string;
-  textColor: string;
 }>();
 
 // 本地状态
@@ -55,15 +54,20 @@ onMounted(async () => {
   document.body.appendChild(pyodideScript);
 });
 
+// 前端运行方式：
+// 可以在input框里用空格分割参数输入，然后在代码里用arg[0]这种去依次访问。
+// 不能用input()会导致浏览器弹窗，当然可以在prompt里输入，就不用在代码写arg
+// sys方式我用不了，读取不到（但是后端是sys）
+
 // 运行代码
 const runCode = async () => {
   try {
-    const parsedArgs = eval(parameters.value) as any[];
-    if (props.selectedLanguage === "javascript") {
-      result.value = new Function('arr', props.code)(parsedArgs);
-    } else if (props.selectedLanguage === "python" && pyodide) {
+    console.log(props.code);
+    if (props.selectedLanguage === "python" && pyodide) {
+      const parsedArgs = parameters.value.split(" "); 
+      console.log(parsedArgs);
       pyodide.globals.set("args", parsedArgs);
-
+      
       await pyodide.runPythonAsync(`
         import sys
         from io import StringIO
@@ -90,10 +94,25 @@ const runCode = async () => {
   flex-direction: column;
   justify-content: center; /* 水平居中 */
   align-items: center;     /* 垂直居中 */
+  color: #000;
+}
+
+.demo-tabs {
+  background-color: white;
+  padding: 32px;
+  color: #6b778c;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 5px;
 }
 
 .btn {
   display: flex;
   margin: 10px;
+}
+
+.result-container {
+  height: 120px;
+  overflow: scroll;
 }
 </style>

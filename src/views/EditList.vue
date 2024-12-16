@@ -14,7 +14,7 @@
                 size="large"
                 type="plain"
                 :icon="Checked"
-                @click=""
+                @click="openDialog_join()"
             >
                 Invited
             </el-button>
@@ -23,17 +23,50 @@
                 size="large"
                 type="primary"
                 :icon="Plus"
-                @click=""
+                @click="openDialog_add()"
             >
                 Add New
             </el-button>
         </div>
       </div>
+
+      <!-- 新建文件弹窗 -->
+      <el-dialog
+        title="Create File"
+        v-model="isDialogVisible_add"
+        width="30%"
+      >
+        <el-input v-model="filename" placeholder="Tpye your filename here:"></el-input>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isDialogVisible_add = false">cancel</el-button>
+            <el-button type="primary" @click="handleAdd()">save</el-button>
+          </div>
+        </template>
+      </el-dialog>
+
+      <!-- 接受邀请弹窗 -->
+      <el-dialog
+        title="Join Work"
+        v-model="isDialogVisible_join"
+        width="30%"
+      >
+        <el-input v-model="invitationCode" placeholder="Paste your invitation code here:"></el-input>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isDialogVisible_join = false">cancel</el-button>
+            <el-button type="primary" @click="handleInvitation()">save</el-button>
+          </div>
+        </template>
+      </el-dialog>
+
       <div class="table">
         <el-table :data="filterTableData" stripe="true" style="width: 100%">
-          <el-table-column label="Date" prop="date" />
-          <el-table-column label="Host" prop="name" />
-          <el-table-column label="File" prop="file" />
+          <el-table-column label="FileID" prop="id" />
+          <el-table-column label="File" prop="title" />
+          <el-table-column label="Create Time" prop="createTime" />
+          <el-table-column label="Last Time" prop="lastModifiedTime" />
+          <el-table-column label="Host" prop="ownerName" />
           <el-table-column align="right">
             <template #header>
               <el-input v-model="search" size="small" placeholder="Type to search" />
@@ -58,12 +91,14 @@
   </template>
   
   <script lang="ts" setup>
-  import { computed, ref } from 'vue'
+  import { computed, ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import ThemeSelector from '../components/BackgroundTheme.vue'
   import StickyNavbar from '../components/Navbar.vue'
-  import { ElMessageBox } from 'element-plus' // 引入 ElMessageBox
-  import { Plus, Checked } from '@element-plus/icons-vue'
+  import { Plus, Checked, Document } from '@element-plus/icons-vue'
+  import { ElMessage } from 'element-plus';
+  import axios from 'axios'
+
   // 定义当前主题
   const currentTheme = ref({
     background: '#1A1A2E',
@@ -71,70 +106,177 @@
     primaryColor: '#0F3460'
   })
   const router = useRouter()
-  
-  interface User {
-    date: string
-    name: string
-    file: string
-  }
-  
+
+// 定义接口 Document
+interface Document {
+  id: number;
+  ownerName: string;
+  createTime: string;
+  lastModifiedTime: string;
+  title: string;
+}
+// 定义表格数据类型为 Document[]
+const tableData = ref<Document[]>([]);
   const search = ref('')
   const filterTableData = computed(() =>
-    tableData.filter(
-      (data) =>
+    tableData.value.filter(
+      (data:any) =>
         !search.value ||
-        data.name.toLowerCase().includes(search.value.toLowerCase()) ||
-        data.file.toLowerCase().includes(search.value.toLowerCase())
+        data.ownerName.toLowerCase().includes(search.value.toLowerCase()) ||
+        data.title.toLowerCase().includes(search.value.toLowerCase())
     )
-  )
-  
-  const handleEdit = (index: number, row: User) => {
-    router.push('/basecode')
-  }
-  
-  const handleDelete = (index: number, row: User) => {
-    ElMessageBox.confirm(
-      'Are you sure you want to delete this item?', // 提示信息
-      'Confirm Deletion', // 标题
-      {
-        confirmButtonText: 'Delete',
-        cancelButtonText: 'Cancel',
+  );
+
+  const isDialogVisible_add = ref(false);
+  const filename = ref("");
+
+  const openDialog_add = () => {
+    isDialogVisible_add.value = true;
+  };
+
+  const handleAdd = async () => {
+    if (!filename.value.trim()) {
+      ElMessage({
+        message: 'Filename cannot be empty!',
         type: 'warning',
-      }
-    )
-      .then(() => {
-        // 用户确认删除，删除对应的数据行
-        tableData.splice(index, 1);
-        console.log(`Deleted: ${row.name}`);
+        duration: 3000, 
       })
-      .catch(() => {
-        // 用户取消删除，做相应的处理
-        console.log('Deletion canceled');
-      });
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `http://localhost:8048/document/create?title=${filename.value}`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      console.log(response.data);
+      ElMessage({
+        message: 'Created!',
+        type: 'success',
+        duration: 3000, 
+      })
+
+      // 刷新文件列表
+      fetchFileList();
+    } catch (error:any) {
+      console.error("Error:", error.response || error.message);
+      ElMessage({
+        message: 'Failed to create file.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } finally {
+      isDialogVisible_add.value = false; // 关闭弹窗
+    }
+  };
+
+  const isDialogVisible_join = ref(false);
+  const invitationCode = ref("");
+
+  const openDialog_join = () => {
+    isDialogVisible_join.value = true;
+  };
+
+  const handleInvitation = async () => {
+    if (!invitationCode.value.trim()) {
+      ElMessage({
+        message: 'Invita tionCode cannot be empty!',
+        type: 'warning',
+        duration: 3000, 
+      })
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8048/document/createSharedbService?invitationCode=${invitationCode.value}`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      console.log(response.data);
+      ElMessage({
+        message: 'Authorited!',
+        type: 'success',
+        duration: 3000, 
+      })
+    } catch (error:any) {
+      console.error("Error:", error.response || error.message);
+      ElMessage({
+        message: 'Failed to join the file.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } finally {
+      isDialogVisible_join.value = false; // 关闭弹窗
+    }
   };
   
-  const tableData: User[] = [
-    {
-      date: '2016-05-03',
-      name: 'Tom',
-      file: 'No. 189',
-    },
-    {
-      date: '2016-05-02',
-      name: 'John',
-      file: 'No. 181',
-    },
-    {
-      date: '2016-05-04',
-      name: 'Morgan',
-      file: 'No. 182',
-    },
-    {
-      date: '2016-05-01',
-      name: 'Jessy',
-      file: 'No. 121',
-    },
-  ]
+  const handleEdit = (index: number, row: any) => {
+    console.log(row.id);
+    router.push({
+      path: '/basecode',
+      query: { documentId: row.id.toString() } 
+    })
+  }
+  
+  // 删除文件的方法
+  const handleDelete = async (index: number, row: any) => {
+    const documentId = row.id;  // 获取当前行的 fileId
+    try {
+      console.log(documentId);
+      const response = await axios.post(
+        `http://localhost:8048/document/delete?documentId=${documentId}`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`  // 在请求头中添加 Authorization
+          }
+      });
+      
+      // 如果删除成功，可以移除表格中的该行
+      if (response.status === 200) {
+        tableData.value.splice(index, 1);  // 删除前端数据中的该行
+        ElMessage({
+          message: 'Deleted!',
+          type: 'success',
+          duration: 3000, 
+        })
+      }
+    } catch (error) {
+      console.error('Error deleting file:', error);
+    }
+  };
+
+  const fetchFileList = async()=> {
+    try {
+      const response = await axios.get('http://localhost:8048/document/getfilelist',{
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+      tableData.value = response.data.map((item:Document) => ({
+        id: item.id,
+        createTime: item.createTime,
+        lastModifiedTime: item.lastModifiedTime,
+        ownerName: item.ownerName,
+        title: item.title
+      }));
+    } catch (error) {
+      console.error('Error fetching file list:', error);
+    }
+  }
+  
+  onMounted(async () => {
+    fetchFileList();
+  });
   </script>
   
   <style>

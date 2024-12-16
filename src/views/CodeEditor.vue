@@ -5,29 +5,25 @@
   />
   <UserList />
   <div class="wrapper">
-    <h1 class="title">Ready for Code Exploration!</h1>
     <div class="inner-wrapper">
       <div class="code-section">
         <!-- 语言选择器和主题选择器以及代码编辑器 -->
-        <LanguageAndThemeSelector
+        <SharedbCodeMirror
+          v-if="documentId !== 0"
           v-model:code="code"
           v-model:selectedLanguage="selectedLanguage"
           height= "500px"
           width="900px"
-          color=var(--primary-color)
-          textColor=var(--color)
-        />
-
-        <!-- 代码运行器 -->
-        <CodeRunner
-          :code="code"
-          :selectedLanguage="selectedLanguage"
-          height= "180px"
-          width="900px"
-          color=var(--primary-color)
-          textColor=var(--color)
+          :documentId=documentId
         />
       </div>
+      <!-- 代码运行器 -->
+      <CodeRunner
+        :code="code"
+        :selectedLanguage="selectedLanguage"
+        height= "500px"
+        width="200px"
+      />
       <!-- <div class="chat-section">
         <ChatApp
           height= "770px"
@@ -42,13 +38,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import LanguageAndThemeSelector from '../components/LanguageAndThemeSelector.vue'; // 导入 LanguageAndThemeSelector 组件
+import { ref, onMounted, watch } from 'vue';
+import SharedbCodeMirror from '../components/SharedbCodeMirror.vue'; // 导入 LanguageAndThemeSelector 组件
 import CodeRunner from '../components/CodeRunner.vue'; // 导入 CodeRunner 组件
 import ThemeSelector from '../components/BackgroundTheme.vue';
 import StickyNavbar from '../components/Navbar.vue';
 import UserList from '../components/PeopleList.vue';
 // import ChatApp from '../components/ChatApp.vue';
+import { useRoute } from 'vue-router';
+  
+// 获取路由中的参数
+const route = useRoute();
 
 // 定义当前主题
 const currentTheme = ref({
@@ -58,8 +58,15 @@ const currentTheme = ref({
 });
 
 // 管理在 Main 组件中共享的状态
+const documentId = ref<number>(0); 
 const code = ref<string>("");  // 保存编辑器中的代码
 const selectedLanguage = ref<string>("python");  // 保存用户选择的语言
+
+onMounted(() => {
+  // 初始化从路由获取的参数
+  console.log(route.query.documentId);
+  documentId.value = Number(route.query.documentId);
+});
 </script>
 
 <style>
@@ -80,7 +87,7 @@ body {
   }
 
 .wrapper {
-  margin-top: 50px;
+  margin-top: 60px;
   display: flex;
   flex-direction: column;
   justify-content: center; /* 水平居中 */
@@ -90,7 +97,7 @@ body {
 .inner-wrapper {
   display: flex;
   justify-content: center; 
-  align-items: center;   
+  align-items: end;   
   border-radius: 10px; 
   padding: 10px;
   gap: 10px;

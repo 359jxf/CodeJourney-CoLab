@@ -11,6 +11,10 @@
     "skipLibCheck": true,
     "typeRoots": ["node_modules/@types"],
     "types": ["axios", "node"],
+    "module": "ES2022",  // 或 "ESNext"
+    "target": "ES2017",  // 或更高版本
+    "moduleResolution": "node",
+    "strict": true
   },
   "include": ["src/**/*"]
 }

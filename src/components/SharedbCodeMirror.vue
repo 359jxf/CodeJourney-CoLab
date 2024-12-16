@@ -1,10 +1,10 @@
 <template>
-  <div class="flex" :style="{backgroundColor: props.color} ">
+  <div class="flex" :style="flexStyle">
     <div class="selector">
       <div class="inner-selector">
         <!-- 语言选择器 -->
         <div>
-          <label for="language"><el-icon :style="{color: props.textColor} "><Place /></el-icon></label>
+          <label for="language"><el-icon :style="iconStyle"><Place /></el-icon></label>
           <el-select v-model="localSelectedLanguage" placeholder="language" size="small" style="width: 100px" @change="updateCM">
             <el-option
               v-for="item in languageOptions"
@@ -17,7 +17,7 @@
 
         <!-- 主题选择器 -->
         <div>
-          <label for="theme"><el-icon :style="{color: props.textColor} " ><Picture /></el-icon></label>
+          <label for="theme"><el-icon :style="iconStyle"><Picture /></el-icon></label>
           <el-select v-model="selectedTheme" placeholder="theme" size="small" style="width: 100px" @change="updateCM">
             <el-option
               v-for="item in themeOptions"
@@ -30,32 +30,60 @@
       </div>
 
       <div>
-        <el-icon :style="{color: props.textColor} "><More /></el-icon>
+        <el-button-group class="ml-4">
+          <el-button type="primary" :icon="Upload" />
+          <el-button type="primary" :icon="Download" />
+          <el-button type="primary" :icon="Share" @click="inviteOthers()" />
+        </el-button-group>
       </div>
     </div>
     <!-- CodeMirror 编辑器 -->
-    <div class="cm">
-      <codemirror
-        :key="editorKey"
-        v-model="localCode"
-        placeholder="Code goes here..."
-        :style="{ width: props.width, height: props.height }"
-        :autofocus="true"
-        :indent-with-tab="true"
-        :tab-size="2"
-        :extensions="extensions"
-      />
-    </div>
+    <codemirror
+      :key="editorKey"
+      v-model="localCode"
+      placeholder="Code goes here..."
+      :style="{ width: props.width, height: props.height }"
+      :autofocus="true"
+      :indent-with-tab="true"
+      :tab-size="2"
+      :extensions="extensions"
+    />
   </div>
+  <!-- 弹窗展示邀请码 -->
+  <el-dialog
+    title="Your Invitation Code"
+    v-model="dialogVisible"
+    width="400px"
+  >
+    <div style="display: flex;justify-content: space-around;align-items: center;">
+      <p>{{ inviteCode }}</p>
+      <el-button 
+        type="primary"
+        circle
+        @click="copyInviteCode" 
+        :disabled="!inviteCode"
+      >
+      <el-icon><CopyDocument /></el-icon>
+      </el-button>
+    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogVisible = false" type="primary">Close</el-button>
+      </div>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { CopyDocument, Share, Upload, Download } from '@element-plus/icons-vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
-import { EditorState } from "@codemirror/state";
+import { ElMessage } from 'element-plus';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
 // import ReconnectingWebSocket from 'reconnecting-websocket';
 // import { Connection } from 'sharedb/lib/client';
 // Props 接收从父组件传递过来的数据
@@ -64,8 +92,7 @@ const props = defineProps<{
   selectedLanguage: string;
   height: string;
   width: string;
-  color: string;
-  textColor: string;
+  documentId: number;
 }>();
 
 // Emit 用于向父组件发送更新事件
@@ -80,6 +107,7 @@ const localSelectedLanguage = ref(props.selectedLanguage);  // 选择的语言
 const selectedTheme = ref<string>("oneDark");  // 默认主题
 const editorKey = ref(0);  // 用于强制重新渲染编辑器
 const editorInstance = ref(null); // 保存编辑器实例
+const documentId = ref(props.documentId);
 
 // 语言和主题的选择项
 const languageOptions = [
@@ -91,6 +119,23 @@ const themeOptions = [
   { value: 'oneDark', label: 'One Dark' },
   { value: 'customLight', label: 'Custom Light' },
 ];
+
+// 根据主题选择动态改变背景色
+const flexStyle = computed(() => {
+  return selectedTheme.value === 'oneDark'
+    ? { backgroundColor: 'rgba(40, 44, 52, 1)' }  // 半透明黑色
+    : selectedTheme.value === 'customLight'
+    ? { backgroundColor: 'rgba(255, 255, 255, 1)' }  // 半透明白色
+    : {};
+});
+
+const iconStyle = computed(() => {
+  return selectedTheme.value === 'oneDark'
+    ? { color: 'rgba(255,255,255, 1)' }  // 半透明黑色
+    : selectedTheme.value === 'customLight'
+    ? { color: 'rgba(40, 44, 52, 1)' }  // 半透明白色
+    : {};
+});
 
 // CodeMirror 扩展配置
 let extensions = [python(), oneDark];
@@ -144,6 +189,80 @@ watch(localCode, () => {
   emit('update:code', localCode.value);
 });
 
+const route = useRoute();
+watch(() => route.query.documentId, (newDocumentId) => {
+  documentId.value = Number(newDocumentId);
+  fetchDocumentContent();
+});
+
+const fetchDocumentContent = async () => {
+  if (documentId.value !== null) {
+    try {
+      console.log("documentId",documentId.value);
+      const response = await axios.get(
+        `http://localhost:8048/document/getcontent?documentId=${documentId.value}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      localCode.value = response.data;
+      console.log("success load code!");
+    } catch (error) {
+      console.error('Error fetching content:', error);
+      localCode.value = '';
+    }
+  }
+};
+
+const inviteCode = ref<string>(''); // 用于存储邀请码
+const dialogVisible = ref(false); // 控制弹窗的显示
+
+const inviteOthers= async()=> {
+  if (documentId.value !== null) {
+    try {
+      const response = await axios.get(
+        `http://localhost:8048/document/generatecode?documentId=${documentId.value}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      inviteCode.value = response.data.invitationCode;
+      console.log("success generate code!");
+      dialogVisible.value = true; 
+    } catch (error) {
+      console.error('Error fetching inviteCode:', error);
+      inviteCode.value = '';
+    }
+  }
+}
+
+// 复制邀请码到剪贴板
+const copyInviteCode = () => {
+  if (inviteCode.value) {
+    // 使用 Clipboard API 替代 execCommand
+    navigator.clipboard.writeText(inviteCode.value)
+      .then(() => {
+        ElMessage({
+          message: 'copied!',
+          type: 'success',
+          duration: 3000, 
+        })
+      })
+      .catch((err) => {
+        console.error('failed:', err);
+      });
+  }
+};
+
+
+onMounted(() => { 
+  fetchDocumentContent();
+});
+
 // 初始化 ShareDB 文档连接
 // const initializeShareDB = () => {
 //   const socket = new ReconnectingWebSocket(`ws://${window.location.host}/ws`);
@@ -192,17 +311,16 @@ onMounted(() => {
   padding: 10px;
   border-radius: 5px;
   flex-direction: column;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .selector {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between ;
 }
 
 .inner-selector {
   display: flex;
   gap: 1rem;
 }
-
 </style>

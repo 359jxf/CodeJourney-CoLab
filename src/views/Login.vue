@@ -10,8 +10,8 @@
         <form @submit.prevent="handleLogin">
           <input
             type="text"
-            v-model="username"
-            placeholder="USERNAME"
+            v-model="identity"
+            placeholder="USERNAME OR EMAIL"
             class="login-container form-input"
           />
           <input
@@ -64,7 +64,7 @@ const currentTheme = ref({
   primaryColor: '#0F3460'
 });
 
-const username = ref('');
+const identity = ref('');
 const password = ref('');
 
 const router = useRouter(); // 获取路由实例
@@ -73,7 +73,7 @@ const handleLogin = async () => {
   try {
     // 发送登录请求
     const response = await axios.post('http://localhost:8048/account/login', {
-      username: username.value,
+      identity: identity.value,
       password: password.value,
     });
 

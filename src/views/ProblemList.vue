@@ -14,7 +14,6 @@
           <el-table-column
             prop="status"
             label="Status"
-            width="100"
             :filters="[
                 { text: 'passed', value: 'passed' },
                 { text: 'failed', value: 'failed' },
@@ -31,12 +30,11 @@
                 >
               </template>
           </el-table-column>
-            
+          <el-table-column label="Id" prop="id" />
           <el-table-column label="Title" prop="title" />
           <el-table-column
             prop="tag"
             label="Tag"
-            width="100"
             :filters="[
                 { text: 'hard', value: 'hard' },
                 { text: 'moderate', value: 'moderate' },
@@ -71,10 +69,11 @@
   </template>
   
   <script lang="ts" setup>
-  import { computed, ref } from 'vue'
+  import { computed, ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import ThemeSelector from '../components/BackgroundTheme.vue'
   import StickyNavbar from '../components/Navbar.vue'
+  import axios from 'axios'
   // 定义当前主题
   const currentTheme = ref({
     background: '#1A1A2E',
@@ -83,55 +82,72 @@
   })
   const router = useRouter()
   
-  interface User {
+  interface Problem {
     status: string
+    id: number
     title: string
     tag: string
   }
   
+  const tableData = ref<Problem[]>([]) 
   const search = ref('')
+
   const filterTableData = computed(() =>
-    tableData.filter(
+    tableData.value.filter(
       (data) =>
         !search.value ||
         data.title.toLowerCase().includes(search.value.toLowerCase()) 
     )
   )
 
-  const filterStatus = (value: string, row: User) => {
+  const filterStatus = (value: string, row: Problem) => {
     return row.status === value
   }
 
-  const filterTag = (value: string, row: User) => {
+  const filterTag = (value: string, row: Problem) => {
     return row.tag === value
   }
   
-  const handleTry = (index: number, row: User) => {
-    router.push('/normalOJ')
+  const handleTry = (index: number, row: Problem) => {
+    router.push({
+      path: '/normalOJ',
+      query: { currentProblemId: row.id } // 使用 query 传参
+    });
   }
-  
-  const tableData: User[] = [
-    {
-      status: 'no attempt',
-      title: 'waewe',
-      tag: 'hard'
-    },
-    {
-      status: 'no attempt',
-      title: 'No. 181',
-      tag: 'hard'
-    },
-    {
-      status: 'failed',
-      title: 'No. 182',
-      tag: 'moderate'
-    },
-    {
-      status: 'passed',
-      title: 'No. 121',
-      tag: 'easy'
-    },
-  ]
+
+  const difficultyMap:any = {
+    1: 'easy',
+    2: 'moderate',
+    3: 'hard',
+  }
+
+ // 请求数据并更新 tableData
+  const fetchTableData = async () => {
+  try {
+    const response = await axios.get('http://localhost:8048/question/getListByUser', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`  // 添加 token 到请求头
+        }
+      });
+    console.log('API Response:', response.data)
+    if (Array.isArray(response.data)) {
+      // 处理难度的转换
+      tableData.value = response.data.map((item: any) => ({
+        ...item,
+        tag: difficultyMap[item.difficulty] || 'unknown' // 将整数难度转换为字符串
+      }))
+    } else {
+      console.error('API returned non-array data:', response.data)
+    }
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  }
+  }
+
+  // 在组件挂载后获取数据
+  onMounted(() => {
+    fetchTableData()
+  })
   </script>
   
   <style>
