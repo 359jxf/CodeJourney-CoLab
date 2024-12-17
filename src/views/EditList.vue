@@ -193,7 +193,7 @@ const tableData = ref<Document[]>([]);
 
     try {
       const response = await axios.post(
-        `http://localhost:8048/document/connectService`,
+        `http://localhost:8048/document/connectServiceByInvitation`,
         {
           invitationCode: invitationCode.value
         },

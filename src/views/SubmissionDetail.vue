@@ -1,17 +1,17 @@
 <template>
-    <div>
-      <div title="Result" width="600">
+    <div class="wrapper">
+      <div class="wrapper-2">
         <div v-if="submissionDetail">
-          <strong>This is your No.{{ submissionDetail.attemptNum }} try:</strong>
+          <strong style="font-size:25px;">This is your No.{{ submissionDetail.attemptNum }} try</strong>
+          <p style="font-size: 10px;color: #7c7c7c;">Submitted at {{ submissionDetail.submitTime }} and took {{ submissionDetail.totalTime }} seconds</p>
           <ul>
-            <li>Submitted at {{ submissionDetail.submitTime }} and took {{ submissionDetail.totalTime }} seconds</li>
-            <li><strong>Language:</strong> {{ submissionDetail.language }}</li>
+            <li><strong>Language:</strong> <el-text type="primary">{{ submissionDetail.language }}</el-text></li>
             <li><strong>State:</strong> {{ getStateMessage(submissionDetail.state) }}</li>
             <li><strong>Pass Count:</strong> {{ submissionDetail.passCount }}</li>
             <li v-if="submissionDetail.firstFailureOutput">
-              <strong>First Failure Output:</strong> {{ submissionDetail.firstFailureOutput }}
+              <strong>First Failure Output:</strong> <pre>{{ submissionDetail.firstFailureOutput }}</pre>
             </li>
-            <li><strong>Code:</strong> <pre>{{ submissionDetail.code }}</pre></li>
+            <li><strong>Code:</strong> <pre class="code">{{ submissionDetail.code }}</pre></li>
           </ul>
         </div>
     </div>
@@ -84,5 +84,24 @@
   </script>
 
 <style scoped>
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
 
+.wrapper-2 {
+  padding: 20px;
+  border-radius: 5px;
+  background-color: white;
+  color: #3d3d3d;
+}
+
+.code {
+  background-color: #3d3d3d;
+  border-radius: 5px;
+  padding: 5px;
+  color: #dadada;
+}
 </style>

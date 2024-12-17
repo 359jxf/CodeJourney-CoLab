@@ -82,7 +82,8 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import {Connection} from 'sharedb/lib/client';
+import * as ShareDB from 'sharedb';
+import { Connection, } from 'sharedb/lib/client';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
@@ -202,19 +203,18 @@ const fetchDocumentContent = async () => {
   if (documentId.value !== null) {
     try {
       console.log("documentId",documentId.value);
-      const response = await axios.get(
-        `http://localhost:8048/document/getcontent?documentId=${documentId.value}`,
+      const response = await axios.post(
+        `http://localhost:8048/document/connectServiceById?documentId=${documentId.value}`,
+        {},
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }
       );
-      localCode.value = response.data;
       console.log("success load code!");
     } catch (error) {
       console.error('Error fetching content:', error);
-      localCode.value = '';
     }
   }
 };
@@ -269,15 +269,33 @@ const copyInviteCode = () => {
 onMounted(() => { 
   fetchDocumentContent();
   initializeShareDB();
+  // initializePresence();
 });
 
-const initializeShareDB = () => {
+const initializeShareDB = async()=> {
   const socket = new ReconnectingWebSocket(`ws://localhost:4242`,[],{
     maxEnqueuedMessages:0
   });
   const connection = new Connection(socket);
+  if(inviteCode.value==''){
+    try {
+      const response = await axios.get(
+        `http://localhost:8048/document/generatecode?documentId=${documentId.value}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      inviteCode.value = response.data;
+      console.log("success generate code!");
+    } catch (error:any) {
+      console.error('Error fetching inviteCode:', error);
+    }
+  }
   const docName=inviteCode.value;
-  const doc = connection.get('shared-doc', docName);
+  console.log(docName);
+  const doc:ShareDB.Doc = connection.get('shared-doc', docName);
 
   // 订阅文档的初始内容
   doc.subscribe((error:unknown) => {
@@ -300,18 +318,81 @@ const initializeShareDB = () => {
     localCode.value = content;
   });
 
-  // // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
-  // watch(localCode, (newContent) => {
-  //   if (doc.data.content !== newContent) {
-  //     doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
-  //   }
-  // });
+  // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
+  watch(localCode, (newContent) => {
+    if (doc.data.content !== newContent) {
+      doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
+    }
+  });
 };
 
-// 在组件挂载后初始化编辑器和 ShareDB
-onMounted(() => {
-  // initializeShareDB();
-});
+// // 光标
+// let presence: ShareDB.Presence;
+// let editor: any; 
+
+// const initializePresence = () => {
+//   // 创建一个ReconnectingWebSocket连接
+//   const socket = new ReconnectingWebSocket('ws://localhost:4242');
+//   const connection = new Connection(socket);
+
+//   const docName = inviteCode.value;
+//   const doc: ShareDB.Doc = connection.get('shared-doc', docName);
+
+//   // 创建 presence 实例
+//   const presence = new ShareDB.Presence(connection, docName);
+
+//   // 监听 presence 更新并显示其他人的光标
+//   presence.on('cursor', (cursorData:any) => {
+//     // 处理光标数据，并更新显示其他客户端的光标
+//     updateRemoteCursors(cursorData);
+//   });
+
+//   // 当连接或断开时，更新 presence
+//   socket.onopen = () => {
+//     presence.subscribe();
+//   };
+//   socket.onclose = () => {
+//     presence.unsubscribe();
+//   };
+// };
+
+// const updateRemoteCursors = (cursorData: any) => {
+//   // 更新显示其他客户端的光标
+//   cursorData.forEach((data: any) => {
+//     // 使用某种方法来在页面上显示光标
+//     // 这里是一个简单的伪代码，假设有一个 renderCursor 函数来渲染光标
+//     renderCursor(data.cursor, data.color);
+//   });
+// };
+
+// const renderCursor = (cursor: any, color: string) => {
+//   const cursorElement = document.createElement('div');
+//   cursorElement.style.position = 'absolute';
+//   cursorElement.style.left = `${cursor.left}px`;
+//   cursorElement.style.top = `${cursor.top}px`;
+//   cursorElement.style.width = '2px';
+//   cursorElement.style.height = '16px';
+//   cursorElement.style.backgroundColor = color;
+  
+//   const editorContainer = document.querySelector('#editor-container')!;
+//   editorContainer.appendChild(cursorElement);
+
+// };
+
+// const handleCursorChange = (editor: any) => {
+//   // 获取当前光标位置
+//   const cursor = editor.getCursor();
+
+//   // 使用 presence 更新光标位置
+//   presence.submitPresence({
+//     cursor: cursor,
+//     color: 'blue',  // 可以自定义颜色来区分不同用户
+//   });
+// };
+
+// editor.on('cursorActivity', () => {
+//   handleCursorChange(editor);
+// });
 </script>
 
 <style scoped>
