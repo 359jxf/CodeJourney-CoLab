@@ -175,7 +175,7 @@ const tableData = ref<Document[]>([]);
   };
 
   const isDialogVisible_join = ref(false);
-  const invitationCode = ref("");
+  const invitationCode = ref<string>("");
 
   const openDialog_join = () => {
     isDialogVisible_join.value = true;
@@ -193,20 +193,25 @@ const tableData = ref<Document[]>([]);
 
     try {
       const response = await axios.post(
-        `http://localhost:8048/document/createSharedbService?invitationCode=${invitationCode.value}`,
-        {},
+        `http://localhost:8048/document/connectService`,
+        {
+          invitationCode: invitationCode.value
+        },
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         }
       );
-      console.log(response.data);
       ElMessage({
         message: 'Authorited!',
         type: 'success',
         duration: 3000, 
       })
+      router.push({
+      path: '/basecode',
+      query: { documentId: response.data } 
+    })
     } catch (error:any) {
       console.error("Error:", error.response || error.message);
       ElMessage({
@@ -250,7 +255,14 @@ const tableData = ref<Document[]>([]);
           duration: 3000, 
         })
       }
-    } catch (error) {
+    } catch (error:any) {
+      if(error.response){
+        ElMessage({
+          message: error.response.data,
+          type: 'error',
+          duration: 3000, 
+        })
+      }
       console.error('Error deleting file:', error);
     }
   };

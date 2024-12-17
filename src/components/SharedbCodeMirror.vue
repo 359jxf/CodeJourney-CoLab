@@ -81,13 +81,12 @@ import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
+import ReconnectingWebSocket from 'reconnecting-websocket';
+import {Connection} from 'sharedb/lib/client';
 import { ElMessage } from 'element-plus';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
-import ReconnectingWebSocket from 'reconnecting-websocket';
-import { Connection } from 'sharedb/lib/client';
-// import ReconnectingWebSocket from 'reconnecting-websocket';
-// import { Connection } from 'sharedb/lib/client';
+
 // Props 接收从父组件传递过来的数据
 const props = defineProps<{ 
   code: string;
@@ -113,44 +112,6 @@ const documentId = ref(props.documentId);
 const inviteCode = ref<string>(''); // 用于存储邀请码
 const dialogVisible = ref(false); // 控制弹窗的显示
 
-const initializeShareDB = () => {
-  // 创建 Websocket 连接
-  const socket = new ReconnectingWebSocket('ws://'+window.location.host,[],{
-    maxEnqueuedMessages:0
-  });
-  const connection =new Connection(socket);
-  const docName =  inviteCode.value;
-  //创建本地文档实例，映射到'shared-doc'集合，文档ID 为 docName
-  const doc = connection.get('shared-doc', docName);
-  
-  // 订阅文档的初始内容
-  doc.subscribe((error:unknown) => {
-    if (error) {
-      console.error('文档订阅出错:', error);
-      return;
-    }
-
-    // 如果文档未创建，初始化内容为空字符串
-    if (!doc.type) {
-      doc.create({ content: '' }, 'json0');
-    } else {
-      localCode.value = doc.data.content;
-    }
-  });
-
-  // 当文档内容变化时，将变化应用到 CodeMirror 实例中
-  doc.on('op', (op:any) => {
-    const content = doc.data.content;
-    localCode.value = content;
-  });
-
-  // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
-  watch(localCode, (newContent) => {
-    if (doc.data.content !== newContent) {
-      doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
-    }
-  });
-}
 // 语言和主题的选择项
 const languageOptions = [
   { value: 'python', label: 'Python' },
@@ -269,10 +230,17 @@ const inviteOthers= async()=> {
           }
         }
       );
-      inviteCode.value = response.data.invitationCode;
+      inviteCode.value = response.data;
       console.log("success generate code!");
       dialogVisible.value = true; 
-    } catch (error) {
+    } catch (error:any) {
+      if(error.response){
+        ElMessage({
+          message: error.response.data,
+          type: 'error',
+          duration: 3000, 
+        })
+      }
       console.error('Error fetching inviteCode:', error);
       inviteCode.value = '';
     }
@@ -303,40 +271,42 @@ onMounted(() => {
   initializeShareDB();
 });
 
-// 初始化 ShareDB 文档连接
-// const initializeShareDB = () => {
-//   const socket = new ReconnectingWebSocket(`ws://${window.location.host}/ws`);
-//   const connection = new Connection(socket);
-//   const doc = connection.get('examples', 'shared-editor');
+const initializeShareDB = () => {
+  const socket = new ReconnectingWebSocket(`ws://localhost:4242`,[],{
+    maxEnqueuedMessages:0
+  });
+  const connection = new Connection(socket);
+  const docName=inviteCode.value;
+  const doc = connection.get('shared-doc', docName);
 
-//   // 订阅文档的初始内容
-//   doc.subscribe((error:unknown) => {
-//     if (error) {
-//       console.error('文档订阅出错:', error);
-//       return;
-//     }
+  // 订阅文档的初始内容
+  doc.subscribe((error:unknown) => {
+    if (error) {
+      console.error('文档订阅出错:', error);
+      return;
+    }
 
-//     // 如果文档未创建，初始化内容为空字符串
-//     if (!doc.type) {
-//       doc.create({ content: '' }, 'json0');
-//     } else {
-//       localCode.value = doc.data.content;
-//     }
-//   });
+    // 如果文档未创建，初始化内容为空字符串
+    if (!doc.type) {
+      doc.create({ content: '' }, 'json0');
+    } else {
+      localCode.value = doc.data.content;
+    }
+  });
 
-//   // 当文档内容变化时，将变化应用到 CodeMirror 实例中
-//   doc.on('op', (op:any) => {
-//     const content = doc.data.content;
-//     localCode.value = content;
-//   });
+  // 当文档内容变化时，将变化应用到 CodeMirror 实例中
+  doc.on('op', (op:any) => {
+    const content = doc.data.content;
+    localCode.value = content;
+  });
 
-//   // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
-//   watch(localCode, (newContent) => {
-//     if (doc.data.content !== newContent) {
-//       doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
-//     }
-//   });
-// };
+  // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
+  watch(localCode, (newContent) => {
+    if (doc.data.content !== newContent) {
+      doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
+    }
+  });
+};
 
 // 在组件挂载后初始化编辑器和 ShareDB
 onMounted(() => {
