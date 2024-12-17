@@ -30,35 +30,35 @@
     <FeatureButton
       :icon="DataBoard"
       text="Interactive Teaching"
-      route="/basecode"
+      route="/editlist"
     />
     <FeatureButton
       :icon="Connection"
       text="Team Projects"
-      route="/basecode"
+      route="/editlist"
     />
-    <FeatureButton
-      :icon="Flag"
-      text="Team Competitions"
-      route="/normalOJ"
-    />
-    <FeatureButton
-      :icon="Reading"
-      text="Peer Code Review"
-      route="/"
-    />
-  </div>
-  <div class="buttons">
     <FeatureButton
       :icon="Opportunity"
       text="Free Exploration"
-      route="/basecode"
+      route="/editlist"
     />
     <FeatureButton
       :icon="Collection"
       text="Individual Practice"
-      route="/normalOJ"
+      route="/problemlist"
     />
+  </div>
+  <div class="buttons">
+    <!-- <FeatureButton
+      :icon="Flag"
+      text="Team Competitions"
+      route="/problemlist"
+    /> -->
+    <!-- <FeatureButton
+      :icon="Reading"
+      text="Peer Code Review"
+      route="/"
+    /> -->
   </div>
 
   <!-- 底部联系方式和项目简介 -->
@@ -86,7 +86,7 @@
       </div>
       <div class="project-info">
         <h3>About the Project</h3>
-        <p>This is a SITP project in CST, Tongji University. However, we need more help to finish it due to the tight schedule and insufficient ability. So come with the more help, more!</p>
+        <p>This is a SITP project in CST, Tongji University. And also the final project of JavaEE course in SSE, 2024Fall.</p>
       </div>
     </div>
   </footer>

@@ -44,7 +44,7 @@ const routes: Array<RouteRecordRaw> = [
     path: '/basecode',
     name: 'BaseCode',
     component: BaseCode,
-    // meta: { requiresAuth: true } 
+    meta: { requiresAuth: true } 
   },
   {
     path: '/editlist',

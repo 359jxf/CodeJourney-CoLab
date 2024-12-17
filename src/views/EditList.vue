@@ -45,6 +45,21 @@
         </template>
       </el-dialog>
 
+      <!-- 删除文件弹窗 -->
+      <el-dialog
+        title="Delete File"
+        v-model="isDialogVisible_delete"
+        width="30%"
+      >
+        <p>Are you sure to delete this file?</p>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button @click="isDialogVisible_delete = false">cancel</el-button>
+            <el-button type="primary" @click="handleDelete()">confirm</el-button>
+          </div>
+        </template>
+      </el-dialog>
+
       <!-- 接受邀请弹窗 -->
       <el-dialog
         title="Join Work"
@@ -78,7 +93,7 @@
               <el-button
                 size="small"
                 type="danger"
-                @click="handleDelete(scope.$index, scope.row)"
+                @click="openDialog_delete(scope.$index, scope.row)"
               >
                 Delete
               </el-button>
@@ -231,10 +246,20 @@ const tableData = ref<Document[]>([]);
       query: { documentId: row.id.toString() } 
     })
   }
+
+  const isDialogVisible_delete = ref(false);
+  let row = ref();
+  let index = ref<number>(0);
+
+  const openDialog_delete = (index_: number, row_: any) => {
+    row.value = row_;
+    index.value = index_;
+    isDialogVisible_delete.value = true;
+  };
   
   // 删除文件的方法
-  const handleDelete = async (index: number, row: any) => {
-    const documentId = row.id;  // 获取当前行的 fileId
+  const handleDelete = async () => {
+    const documentId = row.value.id;  // 获取当前行的 fileId
     try {
       console.log(documentId);
       const response = await axios.post(
@@ -248,7 +273,7 @@ const tableData = ref<Document[]>([]);
       
       // 如果删除成功，可以移除表格中的该行
       if (response.status === 200) {
-        tableData.value.splice(index, 1);  // 删除前端数据中的该行
+        tableData.value.splice(index.value, 1);  // 删除前端数据中的该行
         ElMessage({
           message: 'Deleted!',
           type: 'success',
@@ -264,6 +289,8 @@ const tableData = ref<Document[]>([]);
         })
       }
       console.error('Error deleting file:', error);
+    } finally {
+      isDialogVisible_delete.value = false; // 关闭弹窗
     }
   };
 
