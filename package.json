@@ -23,6 +23,8 @@
     "codemirror-ot": "^4.4.0",
     "echarts": "^5.5.1",
     "element-plus": "^2.8.7",
+    "eventemitter3": "^5.0.1",
+    "events": "^3.3.0",
     "express": "^4.21.1",
     "ot-json1": "^1.0.2",
     "pinia": "^2.2.4",

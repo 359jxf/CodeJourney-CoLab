@@ -300,12 +300,12 @@ const initializeShareDB = () => {
     localCode.value = content;
   });
 
-  // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
-  watch(localCode, (newContent) => {
-    if (doc.data.content !== newContent) {
-      doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
-    }
-  });
+  // // 监听 CodeMirror 编辑器的本地变化并更新 ShareDB 文档
+  // watch(localCode, (newContent) => {
+  //   if (doc.data.content !== newContent) {
+  //     doc.submitOp([{ p: ['content'], od: doc.data.content, oi: newContent }]);
+  //   }
+  // });
 };
 
 // 在组件挂载后初始化编辑器和 ShareDB
