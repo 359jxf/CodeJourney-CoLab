@@ -277,6 +277,15 @@ const initializeShareDB = async()=> {
     const socket = new ReconnectingWebSocket(`ws://localhost:4242`,[],{
       maxEnqueuedMessages:0
     });
+    // 监听 WebSocket 连接错误
+    socket.addEventListener('error', (error: any) => {
+      console.error('WebSocket connection error:', error);
+      ElMessage({
+        message: 'Unable to connect to the server.',
+        type: 'error',
+        duration: 3000,
+      });
+    });
     const connection = new Connection(socket);
     if(inviteCode.value==''){
       try {

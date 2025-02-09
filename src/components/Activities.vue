@@ -1,5 +1,5 @@
 <template>
-  <div class="wrapper-2">
+  <div class="wrapper-a">
     <div class="title">
       <h2>Practice Record</h2>
     </div>
@@ -164,9 +164,10 @@
   
   <style scoped>
   
-  .wrapper-2 {
-    height: 430px;
-    padding: 10px;
+  .wrapper-a {
+    width: 650px;
+    /* height: 430px; */
+    padding: 30px;
     background-color: white;
     border-radius: 10px;
     color: #000;

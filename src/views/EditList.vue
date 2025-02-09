@@ -4,8 +4,8 @@
       highlightColor="var(--primary-color)"
     />
     <ThemeSelector :initialTheme="currentTheme" />
-    <div class="wrapper">
-      <div class="wrapper-2">
+    <div class="wrapper-el">
+      <div class="wrapper-el2">
       <div class="title">
         <h1>Latest Works</h1>
         <div>
@@ -335,12 +335,12 @@ const tableData = ref<Document[]>([]);
     transition: background 0.2s ease;
   }
   
-  .wrapper {
+  .wrapper-el {
     display: flex;
     flex-direction: column;
   }
 
-  .wrapper-2 {
+  .wrapper-el2 {
     margin: 12vh 12vw 12vh 12vw;
   }
 

@@ -1,5 +1,5 @@
 <template>
-    <section class="wrapper">
+    <section class="wrapper-no">
       <StickyNavbar
         textColor=var(--color)
         highlightColor=var(--primary-color)
@@ -125,7 +125,7 @@
     transition: background 0.2s ease;
   }
 
-  .wrapper {
+  .wrapper-no {
     margin-top: 50px;
   }
   
@@ -154,6 +154,10 @@
 
   .coding {
     width: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   </style>
   

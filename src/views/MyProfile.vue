@@ -4,7 +4,8 @@
     highlightColor=var(--primary-color)
     />
     <ThemeSelector :initialTheme="currentTheme" />
-    <div class="wrapper">
+    <div class="wrapper-out"> 
+    <div class="wrapper-my">
       <div class="wrapper-left">
         <UserCard 
         :user="user"
@@ -116,6 +117,7 @@
         </div>
       </div>
     </div>
+  </div>
   </template>
   
   <script setup lang="ts">
@@ -310,8 +312,13 @@
     transition: background 0.2s ease;
   }
 
-  .wrapper {
-    margin: 11vh 12vw 7vh 12vw;
+  .wrapper-out {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .wrapper-my {
     display: flex;
     justify-content: center;
     align-items: start;
@@ -396,24 +403,24 @@
 }
 
 /* 性别选择器的样式 */
-.gender-group {
+/* .gender-group {
   
   display: flex;
   align-items: center;
 }
 
 .gender-radio {
-  margin-right: 50px; /* male 和 female 之间的间隔 */
+  margin-right: 50px; 
 }
 
 .gender-radio.male.is-active .el-radio-button__inner {
-  background-color: #DAEDF6; /* Male 选中时的蓝色 */
+  background-color: #DAEDF6;
   color: #3E7FBF;
   border:none;
 }
 
 .gender-radio.female.is-active .el-radio-button__inner {
-  background-color: #FBE8F1; /* Female 选中时的粉色 */
+  background-color: #FBE8F1; 
   color: #B23A7E;
   border:none;
 }
@@ -426,6 +433,6 @@
 .radar-chart-container {
 }
 .calendar-container {
-}
+} */
 
   </style>

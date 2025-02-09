@@ -1,5 +1,5 @@
 <template>
-  <div class="flex" :style="{backgroundColor: props.color} ">
+  <div class="flex" :style="{backgroundColor: props.color,width: props.width+10} ">
     <div class="selector">
       <div class="inner-selector">
         <!-- 语言选择器 -->

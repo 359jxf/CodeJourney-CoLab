@@ -4,8 +4,8 @@
       highlightColor="var(--primary-color)"
     />
     <ThemeSelector :initialTheme="currentTheme" />
-    <div class="wrapper">
-      <div class="wrapper-2">
+    <div class="wrapper-pl">
+      <div class="wrapper-pl2">
       <div class="title">
         <h1>Problem List</h1>
       </div>
@@ -167,12 +167,12 @@
     transition: background 0.2s ease;
   }
   
-  .wrapper {
+  .wrapper-pl {
     display: flex;
     flex-direction: column;
   }
 
-  .wrapper-2 {
+  .wrapper-pl2 {
     margin: 12vh 12vw 12vh 12vw;
   }
 

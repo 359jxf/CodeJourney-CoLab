@@ -4,8 +4,15 @@
     highlightColor=var(--primary-color)
   />
   <UserList />
-  <div class="wrapper">
+  <div class="wrapper-ce">
     <div class="inner-wrapper">
+      <!-- 代码运行器 -->
+      <CodeRunner
+        :code="code"
+        :selectedLanguage="selectedLanguage"
+        height= "500px"
+        width="200px"
+      />
       <div class="code-section">
         <!-- 语言选择器和主题选择器以及代码编辑器 -->
         <SharedbCodeMirror
@@ -17,13 +24,6 @@
           :documentId=documentId
         />
       </div>
-      <!-- 代码运行器 -->
-      <CodeRunner
-        :code="code"
-        :selectedLanguage="selectedLanguage"
-        height= "500px"
-        width="200px"
-      />
       <!-- <div class="chat-section">
         <ChatApp
           height= "770px"
@@ -86,7 +86,7 @@ body {
     transition: background 0.2s ease;
   }
 
-.wrapper {
+.wrapper-ce {
   margin-top: 60px;
   display: flex;
   flex-direction: column;

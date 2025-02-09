@@ -4,7 +4,8 @@
     <!-- Logo区域 -->
     <div class="logo-container">
       <img src="/unicorn.png" alt="logo" class="logo" />
-      <img src="/name.png" alt="name" class="name" />
+      <!-- <img src="/name.png" alt="name" class="name" /> -->
+      <p :style="{ color: highlightColor, fontWeight: 800, margin: '10px', fontSize: '20px' }" >CodeJourney Colab</p>
     </div>
 
     <!-- 导航菜单 -->
