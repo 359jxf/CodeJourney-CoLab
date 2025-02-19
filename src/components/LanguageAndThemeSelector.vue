@@ -1,5 +1,5 @@
 <template>
-  <div class="flex" :style="{backgroundColor: props.color} ">
+  <div class="flex" :style="{backgroundColor: props.color,width: props.width+10} ">
     <div class="selector">
       <div class="inner-selector">
         <!-- 语言选择器 -->
@@ -34,26 +34,30 @@
       </div>
     </div>
     <!-- CodeMirror 编辑器 -->
-    <codemirror
-      :key="editorKey"
-      v-model="localCode"
-      placeholder="Code goes here..."
-      :style="{ width: props.width, height: props.height }"
-      :autofocus="true"
-      :indent-with-tab="true"
-      :tab-size="2"
-      :extensions="extensions"
-    />
+    <div class="cm">
+      <codemirror
+        :key="editorKey"
+        v-model="localCode"
+        placeholder="Code goes here..."
+        :style="{ width: props.width, height: props.height }"
+        :autofocus="true"
+        :indent-with-tab="true"
+        :tab-size="2"
+        :extensions="extensions"
+      />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
 import { EditorView } from "@codemirror/view";
-
+import { EditorState } from "@codemirror/state";
+// import ReconnectingWebSocket from 'reconnecting-websocket';
+// import { Connection } from 'sharedb/lib/client';
 // Props 接收从父组件传递过来的数据
 const props = defineProps<{ 
   code: string;
@@ -75,6 +79,7 @@ const localCode = ref(props.code);  // 代码
 const localSelectedLanguage = ref(props.selectedLanguage);  // 选择的语言
 const selectedTheme = ref<string>("oneDark");  // 默认主题
 const editorKey = ref(0);  // 用于强制重新渲染编辑器
+const editorInstance = ref(null); // 保存编辑器实例
 
 // 语言和主题的选择项
 const languageOptions = [
@@ -119,6 +124,7 @@ const themeExtensions: Record<string, any> = {
   }),
 };
 
+
 // 更新 CodeMirror 的扩展
 const updateCM = () => {
   extensions = [
@@ -137,6 +143,11 @@ watch(localSelectedLanguage, () => {
 watch(localCode, () => {
   emit('update:code', localCode.value);
 });
+
+// 在组件挂载后初始化编辑器和 ShareDB
+onMounted(() => {
+  // initializeShareDB();
+});
 </script>
 
 <style scoped>
@@ -146,16 +157,17 @@ watch(localCode, () => {
   padding: 10px;
   border-radius: 5px;
   flex-direction: column;
-  justify-content: center; /* 水平居中 */
+  justify-content: center; 
 }
 
 .selector {
   display: flex;
-  justify-content: space-between ;
+  justify-content: space-between;
 }
 
 .inner-selector {
   display: flex;
   gap: 1rem;
 }
+
 </style>

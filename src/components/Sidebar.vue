@@ -33,10 +33,12 @@
   
   <script lang="ts" setup>
   import { ref, onMounted, defineProps, defineEmits } from 'vue';
+  import axios from 'axios';
   
   const isOpen = ref(false);
+  
+  // 接收父组件传入的 props
   const props = defineProps<{
-    problems: Array<{ id: number; title: string }>;
     currentProblemId: number;
   }>();
   
@@ -46,30 +48,36 @@
   };
   
   // 定义 emits，用于向父组件传递事件
-const emit = defineEmits<{
-  (e: 'updateProblem', id: number): void;
-}>();
-
-// 接收父组件传入的 props
-const currentProblemId = ref(props.currentProblemId);
-const problems = ref(props.problems);
-
-// 更新当前题目的函数
-const selectProblem = (id: number) => {
-  currentProblemId.value = id;
-  // 使用 emit 发送事件
-  emit('updateProblem', id);
-};
-
-// 加载数据
-onMounted(async () => {
-  if (!problems.value.length) {
-    const response = await fetch('/problems.json');
-    const data = await response.json();
-    problems.value = data;
-  }
-});
+  const emit = defineEmits<{
+    (e: 'updateProblem', id: number): void;
+  }>();
+  
+  // 使用 `ref` 创建一个响应式变量 `currentProblemId`，并初始化为父组件传入的值
+  const currentProblemId = ref(props.currentProblemId);
+  
+  // 使用 `ref` 创建 `problems`，并确保类型为 `Array<{ id: number; title: string }>`
+  const problems = ref<{ id: number; title: string }[]>([]);
+  
+  // 更新当前题目的函数
+  const selectProblem = (id: number) => {
+    currentProblemId.value = id;
+    // 使用 emit 发送事件
+    emit('updateProblem', id);
+  };
+  
+  // 加载数据
+  onMounted(async () => {
+    try {
+      if (!problems.value.length) {
+        const response = await axios.get('http://localhost:8048/question/getList');
+        problems.value = response.data;
+      }
+    } catch (error) {
+      console.error('Failed to load problems:', error);
+    }
+  });
   </script>
+  
   
   <style scoped>
 /* 侧边栏样式 */

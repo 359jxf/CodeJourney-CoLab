@@ -4,12 +4,19 @@
     <!-- Logo区域 -->
     <div class="logo-container">
       <img src="/unicorn.png" alt="logo" class="logo" />
-      <img src="/name.png" alt="name" class="name" />
+      <!-- <img src="/name.png" alt="name" class="name" /> -->
+      <p :style="{ color: highlightColor, fontWeight: 800, margin: '10px', fontSize: '20px' }" >CodeJourney Colab</p>
     </div>
 
     <!-- 导航菜单 -->
     <ul class="nav-links">
-      <li v-for="(link, index) in links" :key="index">
+      <li
+          v-for="(link, index) in links"
+          :key="index"
+          class="nav-item"
+          @mouseenter="showSubMenu(index)"
+          @mouseleave="hideSubMenu"
+        >
         <router-link
           :to="link.path"
           class="nav-link"
@@ -19,6 +26,15 @@
         >
           {{ link.label }}
         </router-link>
+
+        <!-- 子菜单 -->
+        <ul v-if="link.subMenu && hoveredIndex === index" class="sub-menu">
+          <li v-for="(subLink, subIndex) in link.subMenu" :key="subIndex">
+            <router-link :to="subLink.path" class="sub-nav-link">
+              {{ subLink.label }}
+            </router-link>
+          </li>
+        </ul>
       </li>
     </ul>
   </div>
@@ -39,9 +55,16 @@
   // 导航链接数据
   const links = [
     { label: 'Home', path: '/' },
-    { label: 'Online-Coding', path: '/basecode' },
-    { label: 'Practices', path: '/normalOJ' },
-    { label: 'About-Us', path: '/about' },
+    { label: 'Online-Coding', path: '/editlist' },
+    { label: 'Practices', path: '/problemlist' },
+    {
+      label: 'About-Us',
+      path: '/about',
+      subMenu: [
+        { label: 'Project Detail', path: '/about' },
+        { label: 'Relating Algorithm', path: '/aboutalgorithm' }
+      ]
+    },
     { label: 'Me', path: '/profile' }
   ];
   
@@ -49,7 +72,25 @@
   const activeIndex = ref(0);
   const lastScrollY = ref(0); // 记录上一次滚动的位置
   const isNavbarVisible = ref(true); // 控制导航栏的可见性
-  
+  const hoveredIndex = ref<number | null>(null); // 子菜单可见索引
+  let timeoutId: number | null = null; 
+
+  // 显示子菜单
+  const showSubMenu = (index: number) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId); // 如果有定时器正在运行，清除它
+      timeoutId = null;
+    }
+    hoveredIndex.value = index;
+  };
+
+  // 隐藏子菜单
+  const hideSubMenu = () => {
+    timeoutId = window.setTimeout(() => {
+      hoveredIndex.value = null;
+    }, 500); 
+  };
+
   // 根据当前路由设置 `activeIndex`
   const setActiveIndexByRoute = () => {
     const index = links.findIndex(link => link.path === route.path);
@@ -152,5 +193,34 @@
   .nav-link.active {
     font-weight: bold;
   }
+
+  .sub-menu {
+    position: absolute;
+    top: 100%; /* 将子菜单放在导航项下方 */
+    left: 83%;
+    background-color: rgba(255,255,255);
+    list-style: none;
+    padding: 10px 0;
+    margin: 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000; 
+  }
+
+  .sub-menu li {
+    padding: 5px 20px;
+  }
+
+  .sub-menu li:hover {
+    background-color: rgb(236, 236, 236);
+  }
+
+  .sub-nav-link {
+    text-decoration: none;
+    font-weight: 400;
+    color: #333;
+    transition: color 0.2s ease;
+  }
+
   </style>
   

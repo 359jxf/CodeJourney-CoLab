@@ -3,7 +3,7 @@ collaborative online judge
 ### 
 
 ```
-npm istall
+npm install
 npm run dev
 ```
 

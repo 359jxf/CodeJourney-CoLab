@@ -1,79 +1,131 @@
 <template>
-    <section class="container">
-      <div class="register-container">
-        <div class="circle circle-one"></div>
-        <div class="form-container">
-          <div style="display: flex;justify-content: space-between;">
-            <h1 class="opacity" style="font-size: 30px;">REGISTER</h1>
-            <ModelViewer />
-          </div>
-          <form @submit.prevent="handleRegister">
-            <input
-              type="text"
-              v-model="username"
-              placeholder="USERNAME"
-              class="register-container form-input"
-            />
-            <input
-              type="password"
-              v-model="password"
-              placeholder="PASSWORD"
-              class="register-container form-input"
-            />
-            <input
-              type="password"
-              v-model="password"
-              placeholder="VERIFY PASSWORD"
-              class="register-container form-input"
-            />
-            <input
-              type="email"
-              v-model="password"
-              placeholder="EMAIL"
-              class="register-container form-input"
-            />
-            <input
-              type="text"
-              v-model="password"
-              placeholder="OTP"
-              class="register-container form-input"
-            />
-            <button class="register-container form-button opacity" @click="handleRegister">SUBMIT</button>
-          </form>
-          <div class="register-forget opacity">
-            <router-link to="/login" @click.prevent="$emit('login')">LOGIN</router-link>
-            <a href="#" @click.prevent="$emit('forgot-password')">FORGOT PASSWORD</a>
-          </div>
+  <section class="container">
+    <div class="register-container">
+      <div class="circle circle-one"></div>
+      <div class="form-container">
+        <div style="display: flex; justify-content: space-between;">
+          <h1 class="opacity" style="font-size: 30px;">REGISTER</h1>
+          <ModelViewer />
         </div>
-        <div class="circle circle-two"></div>
+        <form @submit.prevent="handleRegister">
+          <input
+            type="text"
+            v-model="username"
+            placeholder="USERNAME"
+            class="register-container form-input"
+          />
+          <input
+            type="password"
+            v-model="password"
+            placeholder="PASSWORD"
+            class="register-container form-input"
+          />
+          <input
+            type="password"
+            v-model="confirmPassword"
+            placeholder="VERIFY PASSWORD"
+            class="register-container form-input"
+          />
+          <input
+            type="email"
+            v-model="email"
+            placeholder="EMAIL"
+            class="register-container form-input"
+          />
+          <button class="register-container form-button opacity">SUBMIT</button>
+        </form>
+        <div class="register-forget opacity">
+          <router-link to="/login" @click.prevent="$emit('login')">LOGIN</router-link>
+          <a href="#" @click.prevent="$emit('forgot-password')">FORGOT PASSWORD</a>
+        </div>
       </div>
-      <!-- 引入 ThemeSelector 组件并传入初始主题 -->
-      <ThemeSelector :initialTheme="currentTheme" />
-    </section>
-  </template>
-  
-  <script lang="ts" setup>
-  import { ref } from 'vue';
-  import ThemeSelector from '../components/BackgroundTheme.vue';
-  import ModelViewer from '../components/ModelViewer.vue';
-  import { useRouter } from 'vue-router';
-  
-  // 定义当前主题
-  const currentTheme = ref({
-    background: '#1A1A2E',
-    color: '#FFFFFF',
-    primaryColor: '#0F3460'
-  });
-  
-  const username = ref('');
-  const password = ref('');
-  
-  const router = useRouter(); // 获取路由实例
-  const handleRegister = () => {
-    console.log('Logging in with:', username.value, password.value);
-    router.push('/');
-  };
-  </script>
+      <div class="circle circle-two"></div>
+    </div>
+    <ThemeSelector :initialTheme="currentTheme" />
+  </section>
+</template>
+
+<script lang="ts" setup>
+import { ref } from 'vue';
+import ThemeSelector from '../components/BackgroundTheme.vue';
+import ModelViewer from '../components/ModelViewer.vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { ElMessage } from 'element-plus'
+
+// 定义当前主题
+const currentTheme = ref({
+  background: '#1A1A2E',
+  color: '#FFFFFF',
+  primaryColor: '#0F3460'
+});
+
+const username = ref('');
+const password = ref('');
+const confirmPassword = ref('');
+const email = ref('');
+
+const router = useRouter(); // 获取路由实例
+
+const handleRegister = async () => {
+  // 确认密码是否一致
+  if (password.value !== confirmPassword.value) {
+    ElMessage({
+      message: 'Passwords do not match!',
+      type: 'error',
+      duration: 3000, // 3秒后消失
+    })
+    return;
+  }
+
+  try {
+    const response = await axios.post('http://localhost:8048/account/register', {
+      username: username.value,
+      password: password.value,
+      email: email.value,
+    });
+
+    if (response.status === 200) {
+      console.log('Registration successful:', response.data);
+      // 注册成功后跳转到首页或登录页
+      router.push('/login');
+    } else {
+      console.error('Registration failed:', response.data);
+      ElMessage({
+        message: 'Registration failed!',
+        type: 'error',
+        duration: 3000, 
+      })
+    }
+  } catch (error:any) {
+    if (error.response) {
+      // 这是 Axios 处理的响应错误
+      console.log('Response error:', error.response);
+      ElMessage({
+        message: error.response.data|| 'An error occurred during login.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } else if (error.request) {
+      // 请求已发送，但没有收到响应
+      console.log('Request error:', error.request);
+      ElMessage({
+        message: 'No response from server.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } else {
+      // 其他错误
+      console.log('Other error:', error.message);
+      ElMessage({
+        message: 'An unknown error occurred.',
+        type: 'error',
+        duration: 3000, 
+      })
+    }
+  }
+};
+</script>
   
   <style>
   :root {

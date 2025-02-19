@@ -1,5 +1,5 @@
 <template>
-    <section class="wrapper">
+    <section class="wrapper-no">
       <StickyNavbar
         textColor=var(--color)
         highlightColor=var(--primary-color)
@@ -7,7 +7,6 @@
       <div  class="container">
         <!-- 侧边导航栏 -->
         <Sidebar
-          :problems="problems"
           :currentProblemId="currentProblemId"
           @updateProblem="handleSelectProblem"
         />
@@ -18,12 +17,6 @@
           <div class="problem" v-if="currentProblem">
             <h2>{{ currentProblem.title }}</h2>
             <p>{{ currentProblem.description }}</p>
-            <div style="display: flex; gap:5px">
-              <el-tag type="primary">Tag 1</el-tag>
-              <el-tag type="success">Tag 2</el-tag>
-              <el-tag type="warning">Tag 4</el-tag>
-              <el-tag type="danger">Tag 5</el-tag>
-          </div>
           </div>
     
           <div class="coding">
@@ -39,7 +32,7 @@
               v-model:code="code"
               v-model:selectedLanguage="selectedLanguage"
               height= "400px"
-              width="800px"
+              width="780px"
               color=var(--primary-color)
               textColor=var(--color)
             />
@@ -48,10 +41,8 @@
             <CodeRunner
               :code="code"
               :selectedLanguage="selectedLanguage"
-              height= "180px"
-              width="800px"
-              color=var(--primary-color)
-              textColor=var(--color)
+              height= "150px"
+              width="730px"
             />
           </div>
         </div>
@@ -61,13 +52,15 @@
   </template>
   
   <script setup lang="ts">
-  import { ref, onMounted } from 'vue';
+  import { ref, watch, onMounted } from 'vue';
   import LanguageAndThemeSelector from '../components/LanguageAndThemeSelector.vue'; 
   import CodeRunner from '../components/CodeRunner.vue'; 
   import CodeReviewer from '../components/CodeReviewer.vue'; 
   import ThemeSelector from '../components/BackgroundTheme.vue';
   import StickyNavbar from '../components/Navbar.vue';
   import Sidebar from '../components/Sidebar.vue';
+  import axios from 'axios';
+  import { useRoute } from 'vue-router';
 
   // 定义当前主题
   const currentTheme = ref({
@@ -77,32 +70,42 @@
   });
   
   // 管理在 Main 组件中共享的状态
+  const route = useRoute();
   const code = ref<string>("");  // 保存编辑器中的代码
   const selectedLanguage = ref<string>("python");  // 保存用户选择的语言
-  const currentProblemId = ref<number>(3);  // 当前选中的题目 ID
+  const currentProblemId = ref<number>(Number(route.query.currentProblemId));  // 当前选中的题目 ID
   const currentProblem = ref<{ title: string; description: string } | null>(null);  // 当前题目信息
-  const problems = ref<{ id: number; title: string; description: string }[]>([]);  // 所有题目信息列表
-  
-  // 从 JSON 文件加载题目信息
-  const loadProblems = async () => {
-    const response = await fetch('/problems.json');
-    const data = await response.json();
-    problems.value = data;
-    currentProblem.value =
-      problems.value.find((problem) => problem.id === currentProblemId.value) || null;
+
+  // 请求具体题目的数据
+  const loadProblem = async (id: number) => {
+    try {
+      const response = await axios.get(`http://localhost:8048/question/get`, {
+        params: { questionId: id },  // 使用params传递查询参数
+      });
+      currentProblem.value = response.data;
+    } catch (error) {
+      console.error('Error loading problem:', error);
+    }
   };
 
   // 当用户选择某个题目时，更新 currentProblemId 并加载对应的题目
   const handleSelectProblem = (id: number) => {
     currentProblemId.value = id;
-    currentProblem.value =
-      problems.value.find((problem) => problem.id === currentProblemId.value) || null;
+    console.log(id);
   };
-  
+
+  // 监听 currentProblemId 变化，自动加载对应题目
+  watch(currentProblemId, (newId) => {
+    if (newId) {
+      loadProblem(newId);
+    }
+  });
+
   // 页面加载时调用
   onMounted(() => {
-      loadProblems();
+    loadProblem(currentProblemId.value);  // 初始加载时获取默认题目
   });
+  
   </script>
   
   <style>  
@@ -122,6 +125,10 @@
     transition: background 0.2s ease;
   }
 
+  .wrapper-no {
+    margin-top: 50px;
+  }
+  
   .container {
     display: flex;
     justify-content: center;
@@ -142,11 +149,15 @@
   }
   
   .problem {
-    width: 500px;
+    width: 45%;
   }
 
   .coding {
-
+    width: 55%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
   </style>
   

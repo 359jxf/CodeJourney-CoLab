@@ -6,16 +6,25 @@
           <img src="/avatar.png" alt="Avatar" />
         </div>
         <div class="info-item">
-          <span class="name" :style="{ color: textColor }">Smith</span>
+          <span class="name" :style="{ color: textColor } " >{{ name }}</span>
         </div>
         <div class="info-item email-container">
           <span class="email" :style="{ color: textColor }">Email:{{ email }}</span>
           <el-icon
-          :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
-          @click="openEditDialog"
-        >
-        <Edit />
-        </el-icon>
+            :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
+            @click="openEditDialog"
+          >
+          <Edit />
+          </el-icon>
+        </div>
+        <div class="info-item email-container">
+          <span class="email" :style="{ color: textColor }">Role:{{ role }}</span>
+          <el-icon
+            :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
+            @click="openCertificateDialog"
+          >
+          <Postcard />
+          </el-icon>
         </div>
       </div>
   
@@ -42,31 +51,68 @@
           Recent Activity
         </el-button>
       </div>
+      
+      <!-- 我的班级 -->
+      <div class="class-section">
+        <el-button
+          type="text"
+          :class="{ active: activeSection === 'class', 'el-button-custom': true }"
+          @click="setActiveSection('class')"
+        >
+        <el-icon><ChatLineSquare /></el-icon>
+          My Class
+        </el-button>
+      </div>
 
        <!-- 编辑邮箱弹窗 -->
-       <el-dialog title="修改邮箱地址" v-model="isDialogVisible">
-        <el-input v-model="email" placeholder="请输入新的邮箱地址"></el-input>
+       <el-dialog title="Change email" v-model="isDialogVisible">
+        <el-input v-model="email" placeholder="Please input new email address"></el-input>
         <!-- 底部按钮区域 -->
         <template #footer>
         <div class="dialog-footer">
-            <el-button @click="isDialogVisible = false">关闭</el-button>
-            <el-button type="primary" @click="updateEmail">确认</el-button>
+            <el-button @click="isDialogVisible = false">cancel</el-button>
+            <el-button type="primary" @click="updateEmail">save</el-button>
         </div>
         </template>
+        </el-dialog>
+
+        <!-- 教师认证弹窗 -->
+        <el-dialog title="Teacher Qualify" v-model="isDialogVisible2" >
+          <p style="font-size: 16px;">Please upload your TQC and employment certificate.</p>
+          <el-upload
+            ref="upload"
+            class="upload-demo"
+            :limit="2"
+            :on-exceed="handleExceed"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+          >
+            <template #trigger>
+              <el-button type="primary">select file</el-button>
+            </template>
+          </el-upload>
+          <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="isDialogVisible2 = false">cancel</el-button>
+                <el-button type="primary" @click="submitUpload">upload </el-button>
+            </div>
+          </template>
         </el-dialog>
     </el-card>
   </template>
   
   <script lang="ts" setup>
   import { defineProps, defineEmits,ref } from 'vue';
-  import { ElMessageBox } from 'element-plus';
   import { ElCard, ElButton, ElDialog, ElInput } from 'element-plus';
-  import { User, Clock,Edit } from '@element-plus/icons-vue';
+  import { User, Clock,Edit, ChatLineSquare, Postcard } from '@element-plus/icons-vue';
+  import axios from 'axios';
+  import { ElMessage } from 'element-plus';
+  import type { UploadFile, UploadProps, UploadRawFile } from 'element-plus'
   
   const props = defineProps<{
     user: {
-      name: string;
-      email: string;
+      name: string | null;
+      email: string | null;
     };
     activeSection: string;
     color: string; // 卡片颜色
@@ -75,31 +121,143 @@
   
   const emit = defineEmits(['update:activeSection']);
   
+  const name = ref(props.user.name);
   const email = ref(props.user.email);
   const isDialogVisible = ref(false);
+  const role = localStorage.getItem('role');
+  const isDialogVisible2 = ref(false);
 
   const setActiveSection = (section: string) => {
     emit('update:activeSection', section);
   };
   
-    const openEditDialog = () => {
-        console.log("打开弹窗"); // 调试信息，确认函数是否被触发
-        isDialogVisible.value = true;
-        console.log("isDialogVisible:", isDialogVisible.value); // 调试输出
-    };
+  const openEditDialog = () => {
+      isDialogVisible.value = true;
+  };
 
-    const updateEmail = () => {
-        isDialogVisible.value = false;
-        // 这里可以添加保存新邮箱的逻辑，比如调用API更新数据
-        console.log("新邮箱地址：", email.value);
-    };
+  const openCertificateDialog = () => {
+      isDialogVisible2.value = true;
+  };
+
+  const updateEmail = async () => {
+    try {
+      isDialogVisible.value = false;
+      
+      const response = await axios.post(
+        'http://localhost:8048/account/editinfo',
+        {
+          // 请求体的内容
+          username: localStorage.getItem('username'),
+          email: email.value
+        },
+        {
+          // 请求头部分
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json', 
+          }
+        }
+      );
+
+      if (response.status === 200) {
+
+        localStorage.setItem('useremail', email.value?? ''); 
+        ElMessage({
+          message: 'your change is reserved.',
+          type: 'success',
+          duration: 3000, 
+        })
+
+      } else {
+        console.error('Edit failed:', response.data);
+        ElMessage({
+          message: 'Edit failed!',
+          type: 'error',
+          duration: 3000, 
+        })
+      }
+    } catch (error:any) {
+      if (error.response) {
+        // 这是 Axios 处理的响应错误
+        console.log('Response error:', error.response);
+        ElMessage({
+          message: error.response.data|| 'An error occurred during edit.',
+          type: 'error',
+          duration: 3000, 
+        })
+      } else if (error.request) {
+        // 请求已发送，但没有收到响应
+        console.log('Request error:', error.request);
+        ElMessage({
+          message: 'No response from server.',
+          type: 'error',
+          duration: 3000, 
+        })
+      } else {
+        // 其他错误
+        console.log('Other error:', error.message);
+        ElMessage({
+          message: 'An unknown error occurred.',
+          type: 'error',
+          duration: 3000, 
+        })
+      }
+    }
+  };
+
+  const upload = ref(null);
+  const fileList = ref<UploadFile[]>([]);
+
+  const handleFileChange = (file: UploadFile, files: UploadFile[]) => {
+    fileList.value = files;
+  };
+
+  const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+    ElMessage.warning(
+        `The limit is 2, you selected ${files.length} files this time, add up to ${
+          files.length + uploadFiles.length
+        } totally`
+      )
+  }
+
+  const submitUpload = async () => {
+    if (fileList.value.length === 0) {
+      ElMessage.error('No files selected');
+      return;
+    }
+
+    const formData = new FormData();
+    fileList.value.forEach(file => {
+      if (file.raw) {
+        formData.append('files', file.raw); 
+      }
+    });
+
+    try {
+      const response = await axios.post('http://localhost:8048/account/tqc', formData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+      ElMessage.success('You are Certified!');
+      isDialogVisible2.value = false; 
+    } catch (error:any) {
+      if(error.response){
+        ElMessage.error(error);
+        return;
+      }
+      ElMessage.error('Some problems inccured.');
+    }
+  };
+
   </script>
   
   <style scoped>
   .user-card {
     width: 305px;
-    height: 348px;
-    padding: 0;
+    height: 420px;
     margin: 5px auto;
     border-radius: 5px;
     border-width: 0;
@@ -110,7 +268,6 @@
     flex-direction: column;
     align-items: center; /* 水平居中 */
     justify-content: center; /* 垂直居中 */
-    margin-bottom: 10px;
   }
   
   .avatar img {
@@ -126,8 +283,8 @@
   
   .email-container {
     margin-top: -20px; /* 减小顶部间距 */
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
  }
 
   .name {

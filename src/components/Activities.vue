@@ -1,141 +1,182 @@
 <template>
-    <div class="card-container">
-      <!-- 上部：标题部分 -->
-      <div class="card-header">
-        <h2>Latest Works</h2>
-      </div>
-      
-      <!-- 中部：按钮部分 -->
-      <div class="tab-buttons">
-        <button 
-          v-for="tab in tabs" 
-          :key="tab" 
-          @click="activeTab = tab"
-          :class="{ active: activeTab === tab }"
-          :style="getButtonStyle(tab)"
-        >
-          {{ tab }}
-        </button>
-      </div>
-      
-      <!-- 下部：表格部分 -->
-      <div class="table-container">
-        <el-table :data="filteredActivities" style="width: 100%">
-          <el-table-column label="#" width="50">
-            <template #default="scope">{{ scope.$index + 1 }}</template>
-          </el-table-column>
-          <el-table-column prop="description" label="Description"></el-table-column>
-          <el-table-column prop="date" label="Date" width="120"></el-table-column>
-        </el-table>
-      </div>
+  <div class="wrapper-a">
+    <div class="title">
+      <h2>Practice Record</h2>
     </div>
-  </template>
+    <div class="table">
+      <el-table :data="filterTableData" :border="parentBorder" height="340" style="width: 100%">
+        <el-table-column type="expand">
+          <template #default="props">
+            <div m="4">
+              <el-table :data="props.row.record" :border="childBorder">
+                <el-table-column label="No" witdh="50%" prop="attemptNum" />
+                <el-table-column label="Date" prop="submitTime" />
+                <el-table-column
+                  prop="state"
+                  label="Result"
+                >
+                  <template #default="scope">
+                    <el-tag
+                      :type="scope.row.state === 1 ? 'success' : (scope.row.state === 2 ? 'warning' : 'danger')"
+                      disable-transitions
+                    >
+                      {{ scope.row.state === 1 ? 'Correct' : (scope.row.state === 2 ? 'Compile error' : 'Wrong answer') }}
+                    </el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column label="Language" prop="language" />
+                <el-table-column align="right">
+                  <template #default="scope">
+                    <el-button type="primary" text="true" size="small" @click="handleMore(props.row, props.row.record[scope.$index])">
+                      More
+                    </el-button>
+                  </template>
+                </el-table-column>
+              </el-table>
+            </div>
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="status" label="Status" width="100">
+          <template #default="scope">
+            <el-tag
+              :type="scope.row.state === 1 ? 'success' : 'danger'"
+              disable-transitions
+            >
+              {{ scope.row.state === 1 ? 'Passed' : 'Failed' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column label="Title" prop="title" />
+        <el-table-column prop="difficulty" label="Difficulty" width="100">
+          <template #default="scope">
+            <el-tag
+              :type="scope.row.difficulty === 'hard' ? 'warning' : (scope.row.difficulty === 'moderate' ? 'primary' : 'success')"
+              disable-transitions
+            >
+              {{ scope.row.difficulty }}
+            </el-tag>
+          </template>
+        </el-table-column>
+
+        <el-table-column align="right">
+          <template #header>
+            <el-input v-model="search" size="small" placeholder="Type to search" />
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
+  </div>
+</template>
+
   
-  <script setup lang="ts">
-  import { ref, computed } from 'vue';
-  import { defineProps } from 'vue';
-  const props = defineProps<{
-    color: string; // 卡片颜色
-    textColor: string; // 普通文字颜色
-  }>();
+  <script lang="ts" setup>
+  import { computed, ref, onMounted } from 'vue'
+  import axios from 'axios'
+  import { useRouter } from 'vue-router'
+  
+  const router = useRouter()
+  const parentBorder = ref(false)
+  const childBorder = ref(false)
+  
+  interface Submission {
+    attemptNum: number
+    submitTime: string
+    language: string
+    state: number
+    passCount: number
+    totalTime: number
+  }
+  
+  interface Question {
+    id: number
+    title: string
+    difficulty: number
+    submitTime: string
+    state: number
+    record: Submission[]
+  }
+  
+  const search = ref('')
+  const tableData = ref<Question[]>([])
+  
+  const difficultyMap:any = {
+    1: 'easy',
+    2: 'moderate',
+    3: 'hard',
+  }
+  
+  const filterTableData = computed(() =>
+    tableData.value.filter(
+      (data) => !search.value || data.title.toLowerCase().includes(search.value.toLowerCase())
+    )
+  )
+  
+  const handleMore = (row: Question, submission: Submission) => {
+    console.log(row.id);
+    console.log(submission.attemptNum);
+    router.push({
+      path: '/submissiondetail',
+      query: {
+        problemId: row.id,
+        attemptNum: submission.attemptNum
+      }
+    })
+  }
 
-  // 定义标签和活动数据
-  const tabs = ['Practices', 'Projects', 'Competitions'];
-  const activeTab = ref(tabs[0]);
-
-  // 获取按钮样式的方法
-    const getButtonStyle = (tab) => {
-    if (activeTab.value === tab) {
-        // 如果按钮被选中，使用 Props 中的颜色和文字颜色
-        return {
-        backgroundColor: props.color,
-        color: props.textColor,
-        };
+  const fetchTableData = async () => {
+    try {
+      // 请求获取历史做题记录
+      const response = await axios.get('http://localhost:8048/question/getAttemptedQuestionList', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`  // 添加 token 到请求头
+        }
+      });
+      const attemptedQuestions = response.data
+  
+      // 请求每个问题的提交记录，并合并数据
+      for (let question of attemptedQuestions) {
+        const submissionResponse = await axios.get(
+          `http://localhost:8048/question/getSubmissionList?questionId=${question.id}`, {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`  // 添加 token 到请求头
+          }
+        });
+        question.record = submissionResponse.data
+      }
+  
+      // 将获取的数据设置到表格数据
+      tableData.value = attemptedQuestions.map((item: any) => ({
+        ...item,
+        difficulty: difficultyMap[item.difficulty] || 'unknown', // 将难度映射为字符串
+      }))
+    } catch (error) {
+      console.error('Error fetching data:', error)
     }
-    // 如果按钮未被选中，返回默认样式
-    return {};
-    };
+  }
   
-  // 活动数据，假设包含了各个标签的数据
-  const activities = ref([
-    { tab: 'Practices', description: 'Add two numbers', date: '2024/10/31' },
-    { tab: 'Practices', description: 'Add two matrix', date: '2024/10/31' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Projects', description: 'Build a calculator', date: '2024/11/01' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-    { tab: 'Competitions', description: 'Hackathon', date: '2024/11/02' },
-  ]);
-  
-  // 过滤活动数据，基于当前选中的标签
-  const filteredActivities = computed(() =>
-    activities.value.filter(activity => activity.tab === activeTab.value)
-  );
+  onMounted(() => {
+    fetchTableData()
+  })
   </script>
   
+  
   <style scoped>
-  .card-container {
-    width: 700px;
-    margin: 20px auto;
-    background-color: #ffffff;
+  
+  .wrapper-a {
+    width: 650px;
+    /* height: 430px; */
+    padding: 30px;
+    background-color: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
+    color: #000;
   }
-  
-  .card-header {
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+
+  .title h2 {
+    padding-bottom: 15px;
+    color: #5d5d5d;
+    border-bottom:1px solid #cccccc;
   }
-  
-  .card-header h2 {
-    font-size: 18px;
-    color: #BABABA;
-    font-weight: bold;
-    margin: 0;
-  }
-  
-  .tab-buttons {
-    display: flex;
-    justify-content: flex-start;
-    margin-bottom: 15px;
-  }
-  
-  .tab-buttons button {
-    background: none;
-    border: none;
-    font-size: 16px;
-    padding: 8px 15px;
-    cursor: pointer;
-    color: #888888;
-    transition: color 0.3s, background-color 0.3s;
-  }
-  
-  .tab-buttons button.active {
-    color: #ffffff;
-    background-color: #3f51b5;
-    border-radius: 5px;
-  }
-  
-  .tab-buttons button:not(.active):hover {
-    color: #3f51b5;
-  }
-  
-  .table-container {
-    max-width: 100%;
-  }
+
   </style>
-  

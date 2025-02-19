@@ -10,8 +10,8 @@
         <form @submit.prevent="handleLogin">
           <input
             type="text"
-            v-model="username"
-            placeholder="USERNAME"
+            v-model="identity"
+            placeholder="USERNAME OR EMAIL"
             class="login-container form-input"
           />
           <input
@@ -20,7 +20,7 @@
             placeholder="PASSWORD"
             class="login-container form-input"
           />
-          <button class="login-container form-button opacity" @click="handleLogin">SUBMIT</button>
+          <button class="login-container form-button opacity">SUBMIT</button>
         </form>
         <div class="register-forget opacity">
           <router-link to="/register" @click.prevent="$emit('register')">REGISTER</router-link>
@@ -29,6 +29,14 @@
       </div>
       <div class="circle circle-two"></div>
     </div>
+    <router-link to="/">
+      <el-button
+        type="primary"
+        link
+      >
+        Continue as Guest
+      </el-button>
+    </router-link>
     <!-- 引入 ThemeSelector 组件并传入初始主题 -->
     <ThemeSelector :initialTheme="currentTheme" />
   </section>
@@ -39,6 +47,14 @@ import { ref } from 'vue';
 import ThemeSelector from '../components/BackgroundTheme.vue';
 import ModelViewer from '../components/ModelViewer.vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
+import { ElMessage } from 'element-plus';
+
+declare module '@vue/runtime-core' {
+  interface ComponentCustomProperties {
+    $message: typeof ElMessage;
+  }
+}
 
 
 // 定义当前主题
@@ -48,13 +64,80 @@ const currentTheme = ref({
   primaryColor: '#0F3460'
 });
 
-const username = ref('');
+const identity = ref('');
 const password = ref('');
 
 const router = useRouter(); // 获取路由实例
-const handleLogin = () => {
-  console.log('Logging in with:', username.value, password.value);
-  router.push('/');
+
+const handleLogin = async () => {
+  try {
+    // 发送登录请求
+    const response = await axios.post('http://localhost:8048/account/login', {
+      identity: identity.value,
+      password: password.value,
+    });
+
+    if (response.status === 200) {
+      // 登录成功，获取 token
+      const token = response.data.token;
+      localStorage.setItem('token', token); 
+      const role = response.data.role;
+      localStorage.setItem('role', role); 
+      ElMessage({
+        message: 'Login Successful!',
+        type: 'success',
+        duration: 3000, 
+      })
+
+      // 使用 token 进行 getInfo 请求
+      const response2 = await axios.get('http://localhost:8048/account/getinfo', {
+        headers: {
+          'Authorization': `Bearer ${token}`  // 添加 token 到请求头
+        }
+      });
+      let username = response2.data.username; 
+      let useremail = response2.data.email; 
+      localStorage.setItem('username', username); 
+      localStorage.setItem('useremail', useremail); 
+      console.log('GetInfo successful:', response2.data);
+
+      // 跳转到首页
+      router.push('/');
+    } else {
+      console.error('Login failed:', response.data);
+      ElMessage({
+        message: 'Login failed!',
+        type: 'error',
+        duration: 3000, 
+      })
+    }
+  } catch (error:any) {
+    if (error.response) {
+      // 这是 Axios 处理的响应错误
+      console.log('Response error:', error.response);
+      ElMessage({
+        message: error.response.data|| 'An error occurred during login.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } else if (error.request) {
+      // 请求已发送，但没有收到响应
+      console.log('Request error:', error.request);
+      ElMessage({
+        message: 'No response from server.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } else {
+      // 其他错误
+      console.log('Other error:', error.message);
+      ElMessage({
+        message: 'An unknown error occurred.',
+        type: 'error',
+        duration: 3000, 
+      })
+    }
+  }
 };
 </script>
 
@@ -94,9 +177,11 @@ h1 {
 
 .container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  gap: 5px;
 }
 
 .login-container {

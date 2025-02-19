@@ -1,21 +1,20 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "strict": true,
+    "outDir": "./dist",
     "jsx": "preserve",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]  // 添加这行
+      "@/*": ["src/*"],
+      "@codemirror/state": ["./node_modules/@codemirror/state"]
     },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/types"
-    ]
+    "skipLibCheck": true,
+    "typeRoots": ["node_modules/@types"],
+    "types": ["axios", "node"],
+    "module": "ES2022",  // 或 "ESNext"
+    "target": "ES2017",  // 或更高版本
+    "moduleResolution": "node",
+    "strict": true
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["src/**/*"]
 }
