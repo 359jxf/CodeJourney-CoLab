@@ -12,6 +12,7 @@ const ProblemList = () => import('../views/ProblemList.vue');
 const NormalOJ = () => import('../views/NormalOJ.vue');
 const MyProfile = () => import('../views/MyProfile.vue');
 const SubmissionDetail = () => import('../views/SubmissionDetail.vue');
+const ClassDetail = () => import('../views/ClassDetail.vue');
 
 // 定义路由
 const routes: Array<RouteRecordRaw> = [
@@ -74,6 +75,12 @@ const routes: Array<RouteRecordRaw> = [
     path: '/submissiondetail',
     name: 'SubmissionDetail',
     component: SubmissionDetail,
+    meta: { requiresAuth: true } 
+  },
+  {
+    path: '/classdetail',
+    name: 'ClassDetail',
+    component: ClassDetail,
     meta: { requiresAuth: true } 
   }
 ];

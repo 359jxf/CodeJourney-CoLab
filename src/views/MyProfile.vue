@@ -114,6 +114,14 @@
               />
             </div>
           </div>
+          <div v-if="activeSection === 'class'">
+            <div class="classes-container">
+              <ClassCard
+                color=var(--primary-color)
+                textColor=var(--color)
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -130,6 +138,7 @@
   import Calendar from '../components/Calendar.vue';
   import { Edit } from '@element-plus/icons-vue'
   import ActivityCard from '../components/Activities.vue';
+  import ClassCard from '../components/Classes.vue';
   import { ElCard } from 'element-plus';
   import axios from 'axios';
   import { ElMessage, ElDialog, ElButton } from 'element-plus';
@@ -250,7 +259,7 @@
   // 退出登录
   const logout = async () => {
     try {
-      console.log('logout triggered');
+      console.log('logout triggered ');
       // 调用后端登出 API
       const response = await axios.get('http://localhost:8048/account/logout',  {
         headers: {
@@ -263,6 +272,7 @@
         localStorage.removeItem('token');
         localStorage.removeItem('username');
         localStorage.removeItem('useremail');
+        localStorage.removeItem('role');
 
         ElMessage({
           message: 'Logged out successfully!',

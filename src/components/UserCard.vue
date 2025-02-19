@@ -11,11 +11,20 @@
         <div class="info-item email-container">
           <span class="email" :style="{ color: textColor }">Email:{{ email }}</span>
           <el-icon
-          :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
-          @click="openEditDialog"
-        >
-        <Edit />
-        </el-icon>
+            :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
+            @click="openEditDialog"
+          >
+          <Edit />
+          </el-icon>
+        </div>
+        <div class="info-item email-container">
+          <span class="email" :style="{ color: textColor }">Role:{{ role }}</span>
+          <el-icon
+            :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
+            @click="openCertificateDialog"
+          >
+          <Postcard />
+          </el-icon>
         </div>
       </div>
   
@@ -42,6 +51,18 @@
           Recent Activity
         </el-button>
       </div>
+      
+      <!-- 我的班级 -->
+      <div class="class-section">
+        <el-button
+          type="text"
+          :class="{ active: activeSection === 'class', 'el-button-custom': true }"
+          @click="setActiveSection('class')"
+        >
+        <el-icon><ChatLineSquare /></el-icon>
+          My Class
+        </el-button>
+      </div>
 
        <!-- 编辑邮箱弹窗 -->
        <el-dialog title="Change email" v-model="isDialogVisible">
@@ -54,15 +75,39 @@
         </div>
         </template>
         </el-dialog>
+
+        <!-- 教师认证弹窗 -->
+        <el-dialog title="Teacher Qualify" v-model="isDialogVisible2" >
+          <p style="font-size: 16px;">Please upload your TQC and employment certificate.</p>
+          <el-upload
+            ref="upload"
+            class="upload-demo"
+            :limit="2"
+            :on-exceed="handleExceed"
+            :auto-upload="false"
+            :on-change="handleFileChange"
+          >
+            <template #trigger>
+              <el-button type="primary">select file</el-button>
+            </template>
+          </el-upload>
+          <template #footer>
+            <div class="dialog-footer">
+                <el-button @click="isDialogVisible2 = false">cancel</el-button>
+                <el-button type="primary" @click="submitUpload">upload </el-button>
+            </div>
+          </template>
+        </el-dialog>
     </el-card>
   </template>
   
   <script lang="ts" setup>
   import { defineProps, defineEmits,ref } from 'vue';
   import { ElCard, ElButton, ElDialog, ElInput } from 'element-plus';
-  import { User, Clock,Edit } from '@element-plus/icons-vue';
+  import { User, Clock,Edit, ChatLineSquare, Postcard } from '@element-plus/icons-vue';
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
+  import type { UploadFile, UploadProps, UploadRawFile } from 'element-plus'
   
   const props = defineProps<{
     user: {
@@ -79,17 +124,22 @@
   const name = ref(props.user.name);
   const email = ref(props.user.email);
   const isDialogVisible = ref(false);
+  const role = localStorage.getItem('role');
+  const isDialogVisible2 = ref(false);
 
   const setActiveSection = (section: string) => {
     emit('update:activeSection', section);
   };
   
-    const openEditDialog = () => {
-        isDialogVisible.value = true;
-        console.log("isDialogVisible:", isDialogVisible.value); // 调试输出
-    };
+  const openEditDialog = () => {
+      isDialogVisible.value = true;
+  };
 
-    const updateEmail = async () => {
+  const openCertificateDialog = () => {
+      isDialogVisible2.value = true;
+  };
+
+  const updateEmail = async () => {
     try {
       isDialogVisible.value = false;
       
@@ -110,7 +160,6 @@
       );
 
       if (response.status === 200) {
-        const token = response.data;
 
         localStorage.setItem('useremail', email.value?? ''); 
         ElMessage({
@@ -156,13 +205,59 @@
     }
   };
 
+  const upload = ref(null);
+  const fileList = ref<UploadFile[]>([]);
+
+  const handleFileChange = (file: UploadFile, files: UploadFile[]) => {
+    fileList.value = files;
+  };
+
+  const handleExceed: UploadProps['onExceed'] = (files, uploadFiles) => {
+    ElMessage.warning(
+        `The limit is 2, you selected ${files.length} files this time, add up to ${
+          files.length + uploadFiles.length
+        } totally`
+      )
+  }
+
+  const submitUpload = async () => {
+    if (fileList.value.length === 0) {
+      ElMessage.error('No files selected');
+      return;
+    }
+
+    const formData = new FormData();
+    fileList.value.forEach(file => {
+      if (file.raw) {
+        formData.append('files', file.raw); 
+      }
+    });
+
+    try {
+      const response = await axios.post('http://localhost:8048/account/tqc', formData, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(response.data);
+      ElMessage.success('You are Certified!');
+      isDialogVisible2.value = false; 
+    } catch (error:any) {
+      if(error.response){
+        ElMessage.error(error);
+        return;
+      }
+      ElMessage.error('Some problems inccured.');
+    }
+  };
+
   </script>
   
   <style scoped>
   .user-card {
     width: 305px;
-    height: 348px;
-    padding: 0;
+    height: 420px;
     margin: 5px auto;
     border-radius: 5px;
     border-width: 0;
@@ -173,7 +268,6 @@
     flex-direction: column;
     align-items: center; /* 水平居中 */
     justify-content: center; /* 垂直居中 */
-    margin-bottom: 10px;
   }
   
   .avatar img {
@@ -189,8 +283,8 @@
   
   .email-container {
     margin-top: -20px; /* 减小顶部间距 */
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
  }
 
   .name {

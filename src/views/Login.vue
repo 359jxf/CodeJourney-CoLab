@@ -79,9 +79,10 @@ const handleLogin = async () => {
 
     if (response.status === 200) {
       // 登录成功，获取 token
-      const token = response.data;
-
+      const token = response.data.token;
       localStorage.setItem('token', token); 
+      const role = response.data.role;
+      localStorage.setItem('role', role); 
       ElMessage({
         message: 'Login Successful!',
         type: 'success',
