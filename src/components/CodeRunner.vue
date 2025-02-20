@@ -27,6 +27,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, defineProps } from 'vue';
+import axios from "axios";
 
 // 接收从父组件传递的 props
 const props = defineProps<{
@@ -62,29 +63,44 @@ onMounted(async () => {
 // 运行代码
 const runCode = async () => {
   try {
-    console.log(props.code);
-    if (props.selectedLanguage === "python" && pyodide) {
-      const parsedArgs = parameters.value.split(" "); 
-      console.log(parsedArgs);
-      pyodide.globals.set("args", parsedArgs);
-      
-      await pyodide.runPythonAsync(`
-        import sys
-        from io import StringIO
-        sys.stdout = StringIO()
-      `);
-
-      await pyodide.runPythonAsync(props.code);
-
-      const output = pyodide.runPython(`sys.stdout.getvalue()`);
-      result.value = output || "no output";
-      console.log(result.value);
-    } else {
+    console.log("用户输入的代码:",props.code);
+    console.log("用户输入的参数:", parameters.value); // 打印用户输入的参数
+    if(props.selectedLanguage === "python") {
+      const response = await axios.post(`http://localhost:8048/question/runWithInput`, null, {
+        params: {
+          code: props.code,
+          input: parameters.value
+        }
+      });
+      console.log("Success", response);
+      result.value = response.data;
+    }
+    else {
       result.value = `The language ${props.selectedLanguage} is not supported by now`;
     }
   } catch (err) {
     result.value = `There was an error running: ${err}`;
   }
+    // console.log(props.code);
+    // if (props.selectedLanguage === "python" && pyodide) {
+    //   const parsedArgs = parameters.value.split(" ");
+    //   console.log(parsedArgs);
+    //   pyodide.globals.set("args", parsedArgs);
+    //
+    //   await pyodide.runPythonAsync(`
+    //     import sys
+    //     from io import StringIO
+    //     sys.stdout = StringIO()
+    //   `);
+    //
+    //   await pyodide.runPythonAsync(props.code);
+    //
+    //   const output = pyodide.runPython(`sys.stdout.getvalue()`);
+    //   result.value = output || "no output";
+    //   console.log(result.value);
+    // } else {
+    //   result.value = `The language ${props.selectedLanguage} is not supported by now`;
+    // }
 };
 </script>
 

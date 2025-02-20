@@ -266,10 +266,14 @@ const copyInviteCode = () => {
 };
 
 
-onMounted(() => { 
-  fetchDocumentContent();
-  initializeShareDB();
-  // initializePresence();
+onMounted(async () => {
+  try {
+    await fetchDocumentContent();
+    await initializeShareDB();
+    // initializePresence();
+  } catch (error) {
+    console.error('Error during initialization:', error);
+  }
 });
 
 const initializeShareDB = async()=> {
@@ -308,7 +312,7 @@ const initializeShareDB = async()=> {
       }
     }
     const docName=inviteCode.value;
-    console.log(docName);
+    console.log("docName:",docName);
     const doc:ShareDB.Doc = connection.get('shared-doc', docName);
 
     // 订阅文档的初始内容
@@ -322,6 +326,7 @@ const initializeShareDB = async()=> {
       if (!doc.type) {
         doc.create({ content: '' }, 'json0');
       } else {
+        console.log("!~!!!!",doc.data.content);
         localCode.value = doc.data.content;
       }
     });
