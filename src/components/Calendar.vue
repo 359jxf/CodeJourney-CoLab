@@ -1,10 +1,10 @@
 <template>
     <div class="calendar-container">
       <div class="calendar-header">
-        <button @click="prevMonth" class="button" :style="{ color: color }">&lt;</button>
+        <button @click="prevMonth" class="button">&lt;</button>
               <!-- 点击显示年份选择框 -->
         <span @click="toggleYearSelector" class="month-year">{{ currentMonthYear }}</span>
-        <button @click="nextMonth" class="button" :style="{ color: color }">&gt;</button>
+        <button @click="nextMonth" class="button">&gt;</button>
       </div>
 
       <!-- 年份选择下拉框，仅在显示时渲染 -->
@@ -34,18 +34,13 @@
   
   <script lang="ts" setup>
   import { ref, computed } from 'vue';
-  import { defineProps } from 'vue';
-  const props = defineProps<{
-    color: string; // 卡片颜色
-    textColor: string; // 普通文字颜色
-  }>();
 
   // 获取日期样式的方法
     const getDayStyle = (day: number) => {
     if (isSelected(day)) {
         return {
-        backgroundColor: props.color, // 使用传入的 color 作为背景色
-        color: props.textColor, // 使用传入的 textColor 作为文字颜色
+        backgroundColor: 'black', 
+        color: 'yellow', 
         };
     }
     return {};

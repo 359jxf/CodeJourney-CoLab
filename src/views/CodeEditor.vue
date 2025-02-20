@@ -1,8 +1,5 @@
 <template>
-  <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
-  />
+  <StickyNavbar/>
   <UserList />
   <div class="wrapper-ce">
     <div class="inner-wrapper">
@@ -28,20 +25,16 @@
         <ChatApp
           height= "770px"
           width="300px"
-          color=var(--primary-color)
-          textColor=var(--color)
         />
       </div> -->
     </div>
   </div>
-  <ThemeSelector :initialTheme="currentTheme" />
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, watch } from 'vue';
-import SharedbCodeMirror from '../components/SharedbCodeMirror.vue'; // 导入 LanguageAndThemeSelector 组件
-import CodeRunner from '../components/CodeRunner.vue'; // 导入 CodeRunner 组件
-import ThemeSelector from '../components/BackgroundTheme.vue';
+import SharedbCodeMirror from '../components/SharedbCodeMirror.vue'; 
+import CodeRunner from '../components/CodeRunner.vue'; 
 import StickyNavbar from '../components/Navbar.vue';
 import UserList from '../components/PeopleList.vue';
 // import ChatApp from '../components/ChatApp.vue';
@@ -49,13 +42,6 @@ import { useRoute } from 'vue-router';
   
 // 获取路由中的参数
 const route = useRoute();
-
-// 定义当前主题
-const currentTheme = ref({
-  background: '#1A1A2E',
-  color: '#FFFFFF',
-  primaryColor: '#0F3460'
-});
 
 // 管理在 Main 组件中共享的状态
 const documentId = ref<number>(0); 
@@ -69,23 +55,7 @@ onMounted(() => {
 });
 </script>
 
-<style>
-:root {
-  --background: #1a1a2e;
-  --color: #ffffff;
-  --primary-color: #0f3460;
-}
-
-body {
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "poppins", sans-serif;
-    background: var(--background);
-    color: var(--color);
-    letter-spacing: 1px;
-    transition: background 0.2s ease;
-  }
-
+<style scoped>
 .wrapper-ce {
   margin-top: 60px;
   display: flex;
@@ -114,7 +84,4 @@ body {
 
 }
 
-.title {
-  color: var(--color);
-}
 </style>

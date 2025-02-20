@@ -1,8 +1,5 @@
 <template>
-    <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
-    />
+    <StickyNavbar/>
     <ThemeSelector :initialTheme="currentTheme" />
     <div class="wrapper-out"> 
     <div class="wrapper-my">
@@ -11,8 +8,6 @@
         :user="user"
         :activeSection="activeSection"
         @update:activeSection="setActiveSection"
-        color=var(--primary-color)
-        textColor=var(--color)
         />
         <div>I want to
           <el-button
@@ -39,9 +34,6 @@
       <div class="wrapper-right">
         <div class="motto-container">
           <Motto :motto="userMotto"
-          color=var(--primary-color)
-          textColor=var(--color)
-          iconColor=var(--color)
           @update:motto="updateUserMotto" />
         </div>
 
@@ -98,28 +90,18 @@
           </div>
           <div v-else-if="activeSection === 'activity'">
             <!-- <div class="radar-chart-container">
-              <RadarChart
-              color=var(--primary-color)
-              />
+              <RadarChart/>
             </div>
             <div class="calendar-container">
-              <Calendar
-              color=var(--primary-color)
-              textColor=var(--color)   />
+              <Calendar/>
             </div>   -->
             <div class="activities-container">
-              <ActivityCard
-                color=var(--primary-color)
-                textColor=var(--color)
-              />
+              <ActivityCard/>
             </div>
           </div>
           <div v-if="activeSection === 'class'">
             <div class="classes-container">
-              <ClassCard
-                color=var(--primary-color)
-                textColor=var(--color)
-              />
+              <ClassCard/>
             </div>
           </div>
         </div>
@@ -130,7 +112,6 @@
   
   <script setup lang="ts">
   import { onMounted, ref } from 'vue';
-  import ThemeSelector from '../components/BackgroundTheme.vue';
   import StickyNavbar from '../components/Navbar.vue';
   import UserCard from '../components/UserCard.vue';
   import Motto from '../components/Motto.vue';
@@ -305,24 +286,9 @@
 
   </script>
   
-  <style>
-  :root {
-    --background: #1a1a2e;
-    --color: #ffffff;
-    --primary-color: #0f3460;
-  }
-  
-  body {
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "poppins", sans-serif;
-    background: var(--background);
-    color: var(--color);
-    letter-spacing: 1px;
-    transition: background 0.2s ease;
-  }
-
+  <style scoped>
   .wrapper-out {
+    padding: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -383,7 +349,7 @@
   right: calc(50% - 60px);
   width: 30px;
   height: 30px;
-  background-color: var(--primary-color);
+  background:linear-gradient(45deg, #9BBCC3, #CBA5D1);
   border-radius: 50%;
   padding: 5px;
   cursor: pointer;

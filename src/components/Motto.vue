@@ -2,7 +2,7 @@
     <!-- 卡片结构 -->
     <el-card class="motto-card" >
       <!-- Head 区域 -->
-      <div class="head" :style="{ backgroundColor: color }"></div>
+      <div class="head" ></div>
   
       <!-- Content 区域 -->
       <div class="content">
@@ -39,9 +39,6 @@
   
   const props = defineProps<{
     motto: string; // 格言内容
-    color: string; // 头部颜色
-    textColor: string; // 文字颜色
-    iconColor: string; // 编辑图标颜色
   }>();
   
   const emit = defineEmits(['update:motto']);
@@ -66,13 +63,13 @@
   .motto-card {
     display:flexbox;
     width: 700px;
-    height: 110px; /* 父元素固定高度 */
+    height: 90px; 
     border-radius: 5px;
     overflow: hidden;
     border: none;
     padding: 0;
     margin: 5px auto;
-    background-color:#818181;
+    background:linear-gradient(45deg, #9BBCC3, #CBA5D1);
     
   }
   .head {
@@ -81,8 +78,9 @@
     left:-20px;
     margin-bottom: 7px;
     width: 110%;
-    height: 50px;
+    height: 30px;
     border:none;
+    background-color: rgb(62, 62, 62);
   }
   
   .content {

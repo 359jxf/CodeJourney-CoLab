@@ -12,15 +12,15 @@
             type="text"
             v-model="identity"
             placeholder="USERNAME OR EMAIL"
-            class="login-container form-input"
+            class="form-input"
           />
           <input
             type="password"
             v-model="password"
             placeholder="PASSWORD"
-            class="login-container form-input"
+            class="form-input"
           />
-          <button class="login-container form-button opacity">SUBMIT</button>
+          <button class="form-button opacity">SUBMIT</button>
         </form>
         <div class="register-forget opacity">
           <router-link to="/register" @click.prevent="$emit('register')">REGISTER</router-link>
@@ -37,14 +37,11 @@
         Continue as Guest
       </el-button>
     </router-link>
-    <!-- 引入 ThemeSelector 组件并传入初始主题 -->
-    <ThemeSelector :initialTheme="currentTheme" />
   </section>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import ThemeSelector from '../components/BackgroundTheme.vue';
 import ModelViewer from '../components/ModelViewer.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
@@ -55,14 +52,6 @@ declare module '@vue/runtime-core' {
     $message: typeof ElMessage;
   }
 }
-
-
-// 定义当前主题
-const currentTheme = ref({
-  background: '#1A1A2E',
-  color: '#FFFFFF',
-  primaryColor: '#0F3460'
-});
 
 const identity = ref('');
 const password = ref('');
@@ -141,34 +130,10 @@ const handleLogin = async () => {
 };
 </script>
 
-<style>
-:root {
-  --background: #1a1a2e;
-  --color: #ffffff;
-  --primary-color: #0f3460;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  box-sizing: border-box;
-  font-family: "poppins", sans-serif;
-  background: var(--background);
-  color: var(--color);
-  letter-spacing: 1px;
-  transition: background 0.2s ease;
-}
-
+<style scoped>
 a {
   text-decoration: none;
-  color: var(--color);
+  color: rgb(255, 255, 255);
 }
 
 h1 {
@@ -181,7 +146,9 @@ h1 {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  overflow: hidden;
   gap: 5px;
+  background: linear-gradient(45deg, #9BBCC3, #CBA5D1);
 }
 
 .login-container {
@@ -198,12 +165,12 @@ h1 {
   padding: 2rem;
 }
 
-.login-container .form-input {
+.form-input {
   display: block;
   padding: 14.5px;
-  width: 100%;
+  width: 90%;
   margin: 2rem 0;
-  color: var(--color);
+  color: black;
   outline: none;
   background-color: #9191911f;
   border: none;
@@ -214,14 +181,14 @@ h1 {
   backdrop-filter: blur(15px);
 }
 
-.login-container .form-input:focus {
+.form-input:focus {
   box-shadow: 0 0 16px 1px rgba(0, 0, 0, 0.2);
   animation: wobble 0.3s ease-in;
 }
 
-.login-container .form-button {
-  background-color: var(--primary-color);
-  color: var(--color);
+.form-button {
+  background-color: black;
+  color: gainsboro;
   display: block;
   padding: 13px;
   border-radius: 5px;
@@ -236,7 +203,7 @@ h1 {
   border: none;
 }
 
-.login-container .form-button:hover {
+.form-button:hover {
   box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.15);
   transform: scale(1.02);
 }
@@ -244,7 +211,7 @@ h1 {
 .circle {
   width: 8rem;
   height: 8rem;
-  background: var(--primary-color);
+  background: rgba(37, 37, 37, 0.8);
   border-radius: 50%;
   position: absolute;
 }
@@ -259,14 +226,12 @@ h1 {
 .circle-one {
   top: 0;
   left: 0;
-  z-index: -1;
   transform: translate(-45%, -45%);
 }
 
 .circle-two {
   bottom: 0;
   right: 0;
-  z-index: -1;
   transform: translate(45%, 45%);
 }
 

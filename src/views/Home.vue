@@ -1,10 +1,5 @@
 <template>
-  <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
-  />
-
-  <ThemeSelector :initialTheme="currentTheme" />
+  <StickyNavbar/>
 
   <!-- 顶部横幅 -->
   <section class="banner">
@@ -19,7 +14,7 @@
   </section>
 
   <div class="features-intro">
-    <div style="background-color: var(--primary-color);width:5px;height: 60px;"></div>
+    <div class="bar"></div>
     <div>
       <p>A Selection of Recommended Features</p>
       <p>for Users to Try</p>
@@ -94,37 +89,13 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import ThemeSelector from '../components/BackgroundTheme.vue';
 import StickyNavbar from '../components/Navbar.vue';
 import FeatureButton from '../components/FeatureButton.vue';
 import { Location, Phone, Message, Flag, Reading, Connection, Collection, DataBoard, Opportunity } from '@element-plus/icons-vue';
 
-
-// 定义当前主题
-const currentTheme = ref({
-  background: '#1A1A2E',
-  color: '#FFFFFF',
-  primaryColor: '#0F3460'
-});
-
 </script>
 
-<style>
-:root {
-  --background: #1a1a2e;
-  --color: #ffffff;
-  --primary-color: #0f3460;
-}
-
-body {
-  margin: 0;
-  box-sizing: border-box;
-  font-family: "poppins", sans-serif;
-  background: var(--background);
-  color: var(--color);
-  letter-spacing: 1px;
-  transition: background 0.2s ease;
-}
+<style scoped>
 
 /* 顶部横幅样式 */
 .banner {
@@ -156,8 +127,8 @@ body {
   text-decoration: none; /* 去掉下划线 */
   border: none;
   cursor: pointer;
-  color: var(--color);
-  background-color:var(--primary-color);
+  color: white;
+  background:linear-gradient(45deg, #9BBCC3, #CBA5D1);
   box-shadow: 0 6px 10px #2a2a2a;
 
   transition: transform 0.3s ease;
@@ -166,6 +137,12 @@ body {
 
 .learn-more-btn:hover {
   transform: translateY(-10%);
+}
+
+.bar {
+  background: linear-gradient(45deg, #9BBCC3, #CBA5D1);
+  width: 5px;
+  height: 60px;
 }
 
 .buttons {

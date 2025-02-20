@@ -1,9 +1,5 @@
 <template>
-    <StickyNavbar
-      textColor="var(--color)"
-      highlightColor="var(--primary-color)"
-    />
-    <ThemeSelector :initialTheme="currentTheme" />
+    <StickyNavbar />
     <div class="wrapper-el">
       <div class="wrapper-el2">
       <div class="title">
@@ -108,18 +104,11 @@
   <script lang="ts" setup>
   import { computed, ref, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
-  import ThemeSelector from '../components/BackgroundTheme.vue'
   import StickyNavbar from '../components/Navbar.vue'
   import { Plus, Checked, Document } from '@element-plus/icons-vue'
   import { ElMessage } from 'element-plus';
   import axios from 'axios'
 
-  // 定义当前主题
-  const currentTheme = ref({
-    background: '#1A1A2E',
-    color: '#FFFFFF',
-    primaryColor: '#0F3460'
-  })
   const router = useRouter()
 
 // 定义接口 Document
@@ -318,23 +307,7 @@ const tableData = ref<Document[]>([]);
   });
   </script>
   
-  <style>
-  :root {
-    --background: #1a1a2e;
-    --color: #ffffff;
-    --primary-color: #0f3460;
-  }
-  
-  body {
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "poppins", sans-serif;
-    background: var(--background);
-    color: var(--color);
-    letter-spacing: 1px;
-    transition: background 0.2s ease;
-  }
-  
+  <style scoped>
   .wrapper-el {
     display: flex;
     flex-direction: column;

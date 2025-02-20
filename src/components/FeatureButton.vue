@@ -69,7 +69,8 @@
   }
   
   .icon {
-    background-color: #333;
+    background: linear-gradient(45deg, #9BBCC3, #CBA5D1);
+    /* background-color: #333; */
     color: #ffffff;
     width: 40px;
     height: 40px;

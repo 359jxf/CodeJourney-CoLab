@@ -1,26 +1,26 @@
 <template>
-    <el-card class="user-card" :style="{ backgroundColor: color }">
+    <el-card class="user-card" >
       <!-- 头像、名字、邮箱 -->
       <div class="user-brief-info">
         <div class="avatar">
           <img src="/avatar.png" alt="Avatar" />
         </div>
         <div class="info-item">
-          <span class="name" :style="{ color: textColor } " >{{ name }}</span>
+          <span class="name" >{{ name }}</span>
         </div>
         <div class="info-item email-container">
-          <span class="email" :style="{ color: textColor }">Email:{{ email }}</span>
+          <span class="email" >Email:{{ email }}</span>
           <el-icon
-            :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
+            :style="{ cursor: 'pointer', marginLeft: '5px' }"
             @click="openEditDialog"
           >
           <Edit />
           </el-icon>
         </div>
         <div class="info-item email-container">
-          <span class="email" :style="{ color: textColor }">Role:{{ role }}</span>
+          <span class="email" >Role:{{ role }}</span>
           <el-icon
-            :style="{ cursor: 'pointer', marginLeft: '5px', color: textColor }"
+            :style="{ cursor: 'pointer', marginLeft: '5px', }"
             @click="openCertificateDialog"
           >
           <Postcard />
@@ -115,8 +115,6 @@
       email: string | null;
     };
     activeSection: string;
-    color: string; // 卡片颜色
-    textColor: string; // 普通文字颜色
   }>();
   
   const emit = defineEmits(['update:activeSection']);
@@ -257,10 +255,11 @@
   <style scoped>
   .user-card {
     width: 305px;
-    height: 420px;
+    height: 400px;
     margin: 5px auto;
     border-radius: 5px;
     border-width: 0;
+    background:linear-gradient(45deg, #9BBCC3, #CBA5D1);
   }
   
   .user-brief-info {
@@ -329,7 +328,7 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background-color: var(--primary-color); /* 选中时的竖栏颜色 */
+    background:linear-gradient(45deg, #9BBCC3, #CBA5D1);
     border-radius: 2px 0 0 2px;
   }
   
