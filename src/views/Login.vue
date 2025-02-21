@@ -69,101 +69,74 @@ const password = ref('');
 
 const router = useRouter(); // 获取路由实例
 
-// const handleLogin = async () => {
-//   try {
-//     // 发送登录请求
-//     const response = await axios.post('http://localhost:8048/account/login', {
-//       identity: identity.value,
-//       password: password.value,
-//     });
-
-//     if (response.status === 200) {
-//       // 登录成功，获取 token
-//       const token = response.data.token;
-//       localStorage.setItem('token', token); 
-//       const role = response.data.role;
-//       localStorage.setItem('role', role); 
-//       ElMessage({
-//         message: 'Login Successful!',
-//         type: 'success',
-//         duration: 3000, 
-//       })
-
-//       // 使用 token 进行 getInfo 请求
-//       const response2 = await axios.get('http://localhost:8048/account/getinfo', {
-//         headers: {
-//           'Authorization': `Bearer ${token}`  // 添加 token 到请求头
-//         }
-//       });
-//       let username = response2.data.username; 
-//       let useremail = response2.data.email; 
-//       localStorage.setItem('username', username); 
-//       localStorage.setItem('useremail', useremail); 
-//       console.log('GetInfo successful:', response2.data);
-
-//       // 跳转到首页
-//       router.push('/');
-//     } else {
-//       console.error('Login failed:', response.data);
-//       ElMessage({
-//         message: 'Login failed!',
-//         type: 'error',
-//         duration: 3000, 
-//       })
-//     }
-//   } catch (error:any) {
-//     if (error.response) {
-//       // 这是 Axios 处理的响应错误
-//       console.log('Response error:', error.response);
-//       ElMessage({
-//         message: error.response.data|| 'An error occurred during login.',
-//         type: 'error',
-//         duration: 3000, 
-//       })
-//     } else if (error.request) {
-//       // 请求已发送，但没有收到响应
-//       console.log('Request error:', error.request);
-//       ElMessage({
-//         message: 'No response from server.',
-//         type: 'error',
-//         duration: 3000, 
-//       })
-//     } else {
-//       // 其他错误
-//       console.log('Other error:', error.message);
-//       ElMessage({
-//         message: 'An unknown error occurred.',
-//         type: 'error',
-//         duration: 3000, 
-//       })
-//     }
-//   }
-// };
-
-// 测试用的简单登录逻辑
 const handleLogin = async () => {
-  const testUsername = 'testuser';
-  const testPassword = 'testpassword';
-  const useremail = "test@test.com"; 
+  try {
+    // 发送登录请求
+    const response = await axios.post('http://localhost:8048/account/login', {
+      identity: identity.value,
+      password: password.value,
+    });
 
-  if (identity.value === testUsername && password.value === testPassword) {
-    // 登录成功
-    ElMessage({
-      message: 'Login Successful!',
-      type: 'success',
-      duration: 3000,
-    });
-    localStorage.setItem('username', testUsername); 
-    localStorage.setItem('useremail', useremail); 
-    // 模拟跳转到首页
-    router.push('/');
-  } else {
-    // 登录失败
-    ElMessage({
-      message: 'Invalid username or password!',
-      type: 'error',
-      duration: 3000,
-    });
+    if (response.status === 200) {
+      // 登录成功，获取 token
+      const token = response.data.token;
+      localStorage.setItem('token', token); 
+      const role = response.data.role;
+      localStorage.setItem('role', role); 
+      ElMessage({
+        message: 'Login Successful!',
+        type: 'success',
+        duration: 3000, 
+      })
+
+      // 使用 token 进行 getInfo 请求
+      const response2 = await axios.get('http://localhost:8048/account/getinfo', {
+        headers: {
+          'Authorization': `Bearer ${token}`  // 添加 token 到请求头
+        }
+      });
+      let username = response2.data.username; 
+      let useremail = response2.data.email; 
+      localStorage.setItem('username', username); 
+      localStorage.setItem('useremail', useremail); 
+      console.log('GetInfo successful:', response2.data);
+
+      // 跳转到首页
+      router.push('/');
+    } else {
+      console.error('Login failed:', response.data);
+      ElMessage({
+        message: 'Login failed!',
+        type: 'error',
+        duration: 3000, 
+      })
+    }
+  } catch (error:any) {
+    if (error.response) {
+      // 这是 Axios 处理的响应错误
+      console.log('Response error:', error.response);
+      ElMessage({
+        message: error.response.data|| 'An error occurred during login.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } else if (error.request) {
+      // 请求已发送，但没有收到响应
+      console.log('Request error:', error.request);
+      ElMessage({
+        message: 'No response from server.',
+        type: 'error',
+        duration: 3000, 
+      })
+    } else {
+      // 其他错误
+      console.log('Other error:', error.message);
+      ElMessage({
+        message: 'An unknown error occurred.',
+        type: 'error',
+        duration: 3000, 
+      })
+    }
   }
 };
 </script>
