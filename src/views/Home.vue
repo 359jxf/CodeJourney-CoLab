@@ -9,7 +9,7 @@
       <h1 style="font-size: 40px;">Make Coding a Shared Wonderful Journey</h1>
       <p style="font-size: 20px;">Collaborative Programming for Better Teaching and Collaborative Experiences</p>
     </div>
-      <router-link to="/about" class="learn-more-btn">Learn Msore  →</router-link> 
+      <router-link to="/about" class="learn-more-btn">Learn More  →</router-link> 
     </div>
   </section>
 
@@ -81,7 +81,7 @@
       </div>
       <div class="project-info">
         <h3>About the Project</h3>
-        <p>This is a SITP project in CST, Tongji University. And also the final project of JavaEE course in SSE, 2024Fall.</p>
+        <p>Embracing the New Era of Education,we are redefining the ecosystem of programming education,breathing vibrant life into diverse teaching and learning experiences.</p>
       </div>
     </div>
   </footer>
