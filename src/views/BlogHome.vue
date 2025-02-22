@@ -25,8 +25,8 @@
       <div class="article-list">
         <div class="article-sort">
           <el-radio-group v-model="sortType" size="large">
-            <el-radio-button label="recommend">推荐</el-radio-button>
-            <el-radio-button label="latest">最新</el-radio-button>
+            <el-radio-button label="recommend">Recommended</el-radio-button>
+            <el-radio-button label="latest">Latest</el-radio-button>
           </el-radio-group>
         </div>
         <el-card 
@@ -42,7 +42,7 @@
               <p class="post-summary">{{ post.summary }}</p>
               <div class="post-info">
                <div class="post-detail">
-                <span class="post-author">作者: {{ post.author }}</span>
+                <span class="post-author">Author: {{ post.author }}</span>
                 <div class="post-stats">
                     <el-icon><View /></el-icon>
                     <span class="stat-value">{{ post.viewCount }}</span>
@@ -78,12 +78,12 @@
               </div>
               <div class="user-details">
                 <h3 class="username">{{ user.username }}</h3>
-                <el-button @click="goToMyBlog" type="primary" size="small">我的博客
+                <el-button @click="goToMyBlog" type="primary" size="small">My Blog
                   <el-icon><ArrowRight /></el-icon>
                 </el-button>
               </div>
               <div class="user-stats">
-                  <span>文章数：</span>
+                  <span>POSTs:</span>
                   <span>{{ userPostCount }}</span>
                 </div>
             </div>
@@ -92,7 +92,7 @@
           <el-card class="hot-posts-card">
             <div class="hot-posts-header">
               <el-icon><TrendCharts /></el-icon>
-              <span>文章热榜</span>
+              <span>HOT POSTs</span>
             </div>
             <div class="hot-posts-list">
               <div 
@@ -120,13 +120,13 @@
   const router = useRouter();
   // 模拟数据
   const articleTypes = ref([
-    { id: 0, name: '综合', icon: '/unicorn.png' },
-    { id: 1, name: '学习经验', icon: '/unicorn.png' },
-    { id: 2, name: '技术交流', icon: '/unicorn.png' },
-    { id: 3, name: '竞赛心得', icon: '/unicorn.png' },
-    { id: 4, name: '求职面试', icon: '/unicorn.png' },
-    { id: 5, name: '人工智能', icon: '/unicorn.png' },
-    { id: 6, name: '生活闲谈', icon: '/unicorn.png' },
+    { id: 0, name: 'All', icon: '/unicorn.png' },
+    { id: 1, name: 'Learning', icon: '/unicorn.png' },
+    { id: 2, name: 'Technology', icon: '/unicorn.png' },
+    { id: 3, name: 'Competition', icon: '/unicorn.png' },
+    { id: 4, name: 'Interview', icon: '/unicorn.png' },
+    { id: 5, name: 'AI', icon: '/unicorn.png' },
+    { id: 6, name: 'Life', icon: '/unicorn.png' },
   ]);
 
   
@@ -141,7 +141,7 @@
       likeCount: 180,
       typeId: 2,
       publishTime: '2024-01-15T10:00:00Z',
-      tags: ['Vue3', 'Composition API', '前端开发']
+      tags: ['Vue3', 'Composition API', 'Frontend']
     },
     { 
       id: 2,
@@ -153,31 +153,31 @@
       likeCount: 265,
       typeId: 4,
       publishTime: '2024-01-16T14:30:00Z',
-      tags: ['面试经验', '校招', '前端开发']
+      tags: ['Experience sharing', 'Campus Recruitment', 'Frontend']
     },
     {
       id: 3,
-      title: 'ChatGPT API 实战：构建智能问答系统',
-      summary: '本文将介绍如何使用ChatGPT API构建一个智能问答系统。包括API的调用方法、prompt工程技巧、token控制等核心要点，以及一个完整的示例项目...',
+      title: 'Building an AI Q&A System with ChatGPT API',
+      summary: 'A comprehensive guide on building an intelligent Q&A system using ChatGPT API. We\'ll cover API integration, prompt engineering techniques, token management, and walk through a complete example project...',
       image: '/avatar.png',
-      author: '王五',
+      author: 'Mike',
       viewCount: 1890,
       likeCount: 145,
       typeId: 5,
       publishTime: '2024-01-14T09:15:00Z',
-      tags: ['ChatGPT', 'API', '智能系统']
+      tags: ['ChatGPT', 'API', 'Intelligent System']
     },
     {
       id: 4,
-      title: '大三学生如何规划实习？',
-      summary: '作为一名大三学生，如何在课业和实习之间找到平衡？分享我的实习规划经验，包括简历准备、面试技巧、时间管理等方面的建议...',
+      title: 'Internship Planning Guide for Junior Students',
+      summary: 'How to balance academics and internships as a junior student? Sharing my internship planning experience, including resume preparation, interview tips, time management, and more...',
       image: '/study.png',
-      author: '小明',
+      author: 'Sarah',
       viewCount: 2780,
       likeCount: 198,
       typeId: 1,
       publishTime: '2024-01-13T16:45:00Z',
-      tags: ['实习规划', '大学生', '职业发展']
+      tags: ['Internship', 'Career', 'Planning']
     },
     {
       id: 5,
@@ -213,7 +213,7 @@
       likeCount: 142,
       typeId: 2,
       publishTime: '2024-01-10T15:20:00Z',
-      tags: ['TypeScript', 'Vue', '重构']
+      tags: ['TypeScript', 'Vue', 'Refactor']
     },
     {
       id: 8,
@@ -225,19 +225,19 @@
       likeCount: 188,
       typeId: 2,
       publishTime: '2024-01-09T11:30:00Z',
-      tags: ['性能优化', '前端开发', 'Vue']
+      tags: ['Performance', 'Frontend', 'Optimization']
     },
     {
       id: 9,
-      title: '前端工程化实践：从0到1搭建开发环境',
-      summary: '分享如何搭建一个现代化的前端开发环境，包括Vite配置、ESLint规范、Git Hooks、自动化测试等，助力团队提升开发效率...',
+      title: 'Modern Frontend Development Setup',
+      summary: 'A guide to setting up a modern frontend development environment. We\'ll cover Vite configuration, ESLint setup, Git hooks, automated testing, and other tools to improve team productivity...',
       image: null,
       author: 'WANGXINCHENG',
       viewCount: 1680,
       likeCount: 135,
       typeId: 2,
       publishTime: '2024-01-08T09:45:00Z',
-      tags: ['工程化', 'Vite', 'ESLint']
+      tags: ['DevOps', 'Vite', 'ESLint']
     }
   ]);
   
@@ -297,6 +297,15 @@
       })
       .slice(0, 10); // 只显示前10篇
   });
+
+  // 日期格式化函数
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
 
   </script>
   

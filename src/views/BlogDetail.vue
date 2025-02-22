@@ -49,7 +49,7 @@
         <div class="article-header">
           <h1 class="article-title">{{ post.title }}</h1>
           <div class="article-meta">
-            <span class="author">作者： {{ post.author }}</span>
+            <span class="author">Author: {{ post.author }}</span>
             <span class="date">{{ formatDate(post.publishTime) }}</span>
             <span class="views"><el-icon><View /></el-icon> {{ post.viewCount }}</span>
           </div>
@@ -77,15 +77,15 @@
           <p class="author-bio">{{ authorInfo.bio }}</p>
           <div class="author-stats">
             <div class="stat-item">
-              <span class="stat-label">文章数</span>
+              <span class="stat-label">Posts</span>
               <span class="stat-value">{{ authorInfo.postCount }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">阅读量</span>
+              <span class="stat-label">Views</span>
               <span class="stat-value">{{ authorInfo.totalViews }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">获赞数</span>
+              <span class="stat-label">Likes</span>
               <span class="stat-value">{{ authorInfo.totalLikes }}</span>
             </div>
           </div>
@@ -93,7 +93,7 @@
       </el-card>
 
       <el-card class="toc-card">
-        <div class="toc-title">目录</div>
+        <div class="toc-title">Contents</div>
         <div class="toc-content" v-html="toc"></div>
       </el-card>
     </div>
@@ -101,7 +101,7 @@
     <!-- 评论抽屉 -->
     <el-drawer
       v-model="showComments"
-      title="评论"
+      title="Comments"
       direction="rtl"
       size="30%"
       :modal-class="'comment-drawer-modal'"
@@ -112,7 +112,7 @@
           type="textarea"
           :rows="4"
           :maxlength="1000"
-          placeholder="写下你的评论..."
+          placeholder="Write your comment..."
           show-word-limit
         />
         <el-button 
@@ -120,7 +120,7 @@
           @click="submitComment"
           :disabled="!newComment.trim()"
         >
-          发送
+          Send
         </el-button>
       </div>
       <div class="comments-container">
@@ -273,7 +273,7 @@ const toc = computed(() => {
 
 // 格式化日期
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('zh-CN', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'

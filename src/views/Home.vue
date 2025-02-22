@@ -14,7 +14,7 @@
       <h1 style="font-size: 40px;">Make Coding a Shared Wonderful Journey</h1>
       <p style="font-size: 20px;">Collaborative Programming for Better Teaching and Collaborative Experiences</p>
     </div>
-      <router-link to="/about" class="learn-more-btn">Learn Msore  →</router-link> 
+      <router-link to="/about" class="learn-more-btn">Learn More  →</router-link> 
     </div>
   </section>
 

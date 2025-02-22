@@ -9,14 +9,14 @@
     <div class="editor-header">
       <el-input
         v-model="articleTitle"
-        placeholder="请输入文章标题..."
+        placeholder="Enter article title..."
         class="title-input"
       />
       
       <div class="article-meta">
         <el-select 
           v-model="selectedType" 
-          placeholder="选择文章分类"
+          placeholder="Select category"
           class="type-select"
         >
           <el-option
@@ -31,7 +31,7 @@
           v-model="selectedTags"
           multiple
           collapse-tags
-          placeholder="选择标签"
+          placeholder="Select tags"
           class="tag-select"
         >
           <el-option
@@ -67,14 +67,14 @@
         @click="goBack"
         class="cancel-button"
       >
-        取消
+        Cancel
       </el-button>
       <el-button 
         type="primary" 
         @click="publishArticle"
         class="publish-button"
       >
-        发布文章
+        Publish
       </el-button>
     </div>
   </div>
@@ -100,19 +100,19 @@ const editorRef = shallowRef()
 
 // 文章分类
 const articleTypes = ref([
-  { id: 1, name: '学习经验' },
-  { id: 2, name: '技术交流' },
-  { id: 3, name: '竞赛心得' },
-  { id: 4, name: '求职面试' },
-  { id: 5, name: '人工智能' },
-  { id: 6, name: '生活闲谈' }
+  { id: 1, name: 'Learning' },
+  { id: 2, name: 'Technology' },
+  { id: 3, name: 'Competition' },
+  { id: 4, name: 'Interview' },
+  { id: 5, name: 'AI' },
+  { id: 6, name: 'Life' }
 ])
 
 // 可选标签
 const availableTags = ref([
   'Vue', 'React', 'TypeScript', 'JavaScript', 
   'Node.js', 'Python', 'Java', 'Algorithm',
-  '前端', '后端', '全栈', '面试'
+  'Frontend', 'Backend', 'Fullstack', 'Interview'
 ])
 
 // 工具栏配置
@@ -126,7 +126,7 @@ const toolbarConfig = {
 
 // 编辑器配置
 const editorConfig = {
-  placeholder: '请输入内容...',
+  placeholder: 'Enter content...',
   autoFocus: false
 }
 
@@ -147,19 +147,19 @@ const goBack = () => {
 
 const publishArticle = () => {
   if (!articleTitle.value) {
-    ElMessage.warning('请输入文章标题')
+    ElMessage.warning('Please enter article title')
     return
   }
   if (!selectedType.value) {
-    ElMessage.warning('请选择文章分类')
+    ElMessage.warning('Please select a category')
     return
   }
   if (selectedTags.value.length === 0) {
-    ElMessage.warning('请至少选择一个标签')
+    ElMessage.warning('Please select at least one tag')
     return
   }
   if (!editorContent.value) {
-    ElMessage.warning('请输入文章内容')
+    ElMessage.warning('Please enter article content')
     return
   }
 

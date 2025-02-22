@@ -72,15 +72,15 @@
           <p class="author-bio">{{ user.bio }}</p>
           <div class="author-stats">
             <div class="stat-item">
-              <span class="stat-label">文章数</span>
+              <span class="stat-label">Posts</span>
               <span class="stat-value">{{ allUserPosts.length }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">阅读量</span>
+              <span class="stat-label">Views</span>
               <span class="stat-value">{{ totalViews }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">获赞数</span>
+              <span class="stat-label">Likes</span>
               <span class="stat-value">{{ totalLikes }}</span>
             </div>
           </div>
@@ -96,7 +96,7 @@
         >
           <span class="plus-icon">＋</span>
         </el-button>
-        <span class="button-text">创建文章</span>
+        <span class="button-text">New Post</span>
       </div>
     </div>
   </div>
@@ -113,14 +113,14 @@ const selectedType = ref('0');
 
 // 文章分类
 const articleTypes = ref([
-  { id: 0, name: '综合', icon: '/unicorn.png' },
-  { id: 1, name: '学习经验', icon: '/unicorn.png' },
-  { id: 2, name: '技术交流', icon: '/unicorn.png' },
-  { id: 3, name: '竞赛心得', icon: '/unicorn.png' },
-  { id: 4, name: '求职面试', icon: '/unicorn.png' },
-  { id: 5, name: '人工智能', icon: '/unicorn.png' },
-  { id: 6, name: '生活闲谈', icon: '/unicorn.png' },
-]);
+    { id: 0, name: 'All', icon: '/unicorn.png' },
+    { id: 1, name: 'Learning', icon: '/unicorn.png' },
+    { id: 2, name: 'Technology', icon: '/unicorn.png' },
+    { id: 3, name: 'Competition', icon: '/unicorn.png' },
+    { id: 4, name: 'Interview', icon: '/unicorn.png' },
+    { id: 5, name: 'AI', icon: '/unicorn.png' },
+    { id: 6, name: 'Life', icon: '/unicorn.png' },
+  ]);
 
 // 用户信息
 const user = ref({
@@ -175,9 +175,9 @@ const goToPost = (postId: number) => {
   router.push(`/blog/${postId}`);
 };
 
-// 添加日期格式化函数
+// 日期格式化函数
 const formatDate = (dateString: string) => {
-  return new Date(dateString).toLocaleDateString('zh-CN', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
