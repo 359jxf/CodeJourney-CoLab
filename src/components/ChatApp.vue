@@ -2,7 +2,7 @@
   <div class="fixed-chat-container">
     <div class="page-content">
       <div class="card" :style="{width: props.width, height: props.height} ">
-        <div class="card-header" :style="{backgroundColor: props.color, color: props.textColor} ">
+        <div class="card-header">
           <h4><strong>Chat</strong></h4>
         </div>
   
@@ -25,7 +25,7 @@
           </div>
         </div>
   
-        <div class="publisher" :style="{backgroundColor: props.color,color:props.textColor} ">
+        <div class="publisher" >
           <img class="avatar" src="https://img.icons8.com/color/36/000000/administrator-male.png" alt="avatar">
           <input class="publisher-input" type="text" placeholder="Write something" v-model="newMessage" @keyup.enter="sendMessage">
           <span class="publisher-btn"><el-icon :size="20"><Link /></el-icon></span>
@@ -44,8 +44,6 @@
   const props = defineProps<{ 
     height: string;
     width: string;
-    color: string;
-    textColor: string;
   }>();
 
   // 消息数据类型
@@ -102,6 +100,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: antiquewhite;
   }
   
   .chat-container {
@@ -158,6 +157,7 @@
     height: 12%;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    background-color: aliceblue;
   }
   .publisher-input {
     flex-grow: 1;

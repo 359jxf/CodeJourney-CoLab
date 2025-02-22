@@ -41,24 +41,15 @@
       </div>
       <div class="circle circle-two"></div>
     </div>
-    <ThemeSelector :initialTheme="currentTheme" />
   </section>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import ThemeSelector from '../components/BackgroundTheme.vue';
 import ModelViewer from '../components/ModelViewer.vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { ElMessage } from 'element-plus'
-
-// 定义当前主题
-const currentTheme = ref({
-  background: '#1A1A2E',
-  color: '#FFFFFF',
-  primaryColor: '#0F3460'
-});
 
 const username = ref('');
 const password = ref('');
@@ -86,75 +77,36 @@ const handleRegister = async () => {
     });
 
     if (response.status === 200) {
+      ElMessage.success('Registration successful');
       console.log('Registration successful:', response.data);
       // 注册成功后跳转到首页或登录页
       router.push('/login');
     } else {
       console.error('Registration failed:', response.data);
-      ElMessage({
-        message: 'Registration failed!',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error('Registration failed!');
     }
   } catch (error:any) {
     if (error.response) {
       // 这是 Axios 处理的响应错误
       console.log('Response error:', error.response);
-      ElMessage({
-        message: error.response.data|| 'An error occurred during login.',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error(error.response.data|| 'An error occurred during login.');
     } else if (error.request) {
       // 请求已发送，但没有收到响应
       console.log('Request error:', error.request);
-      ElMessage({
-        message: 'No response from server.',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error('No response from server.');
     } else {
       // 其他错误
       console.log('Other error:', error.message);
-      ElMessage({
-        message: 'An unknown error occurred.',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error('An unknown error occurred.');
     }
   }
 };
 </script>
   
-  <style>
-  :root {
-    --background: #1a1a2e;
-    --color: #ffffff;
-    --primary-color: #0f3460;
-  }
-  
-  * {
-    box-sizing: border-box;
-  }
-  
-  html {
-    scroll-behavior: smooth;
-  }
-  
-  body {
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "poppins", sans-serif;
-    background: var(--background);
-    color: var(--color);
-    letter-spacing: 1px;
-    transition: background 0.2s ease;
-  }
-  
+  <style scoped>
   a {
     text-decoration: none;
-    color: var(--color);
+    color: rgb(255, 255, 255);
   }
   
   h1 {
@@ -166,6 +118,8 @@ const handleRegister = async () => {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(45deg, #9BBCC3,#CBA5D1);
   }
   
   .register-container {
@@ -185,9 +139,9 @@ const handleRegister = async () => {
   .register-container .form-input {
     display: block;
     padding: 14.5px;
-    width: 100%;
+    width: 90%;
     margin: 2rem 0;
-    color: var(--color);
+    color: black;
     outline: none;
     background-color: #9191911f;
     border: none;
@@ -204,8 +158,8 @@ const handleRegister = async () => {
   }
   
   .register-container .form-button {
-    background-color: var(--primary-color);
-    color: var(--color);
+    background-color: rgb(0, 0, 0);
+    color: gainsboro;
     display: block;
     padding: 13px;
     border-radius: 5px;
@@ -228,9 +182,10 @@ const handleRegister = async () => {
   .circle {
     width: 8rem;
     height: 8rem;
-    background: var(--primary-color);
+    background: aliceblue;
     border-radius: 50%;
     position: absolute;
+    background: rgba(37, 37, 37, 0.8);
   }
   
   .illustration {
@@ -243,14 +198,12 @@ const handleRegister = async () => {
   .circle-one {
     top: 0;
     left: 0;
-    z-index: -1;
     transform: translate(-45%, -45%);
   }
   
   .circle-two {
     bottom: 0;
     right: 0;
-    z-index: -1;
     transform: translate(45%, 45%);
   }
   

@@ -1,7 +1,6 @@
 <template>
     <el-button
         v-if="identity === 'TEACHER'"
-        class="create-button"
         size="large"
         type="primary"
         :icon="Plus"
@@ -29,6 +28,14 @@
                 @click="goto(section.problemId)"
                 >
                 Try
+              </el-button>
+              <el-button
+                  v-if="identity === 'TEACHER'"
+                  size="small"
+                  type="primary"
+                  :icon="View"
+                  @click="openDialog_view(section.problemId)"
+              >
               </el-button>
             </div>
           </el-card>
@@ -81,13 +88,36 @@
         </div>
       </template>
     </el-dialog>
+
+    <!-- 查看作业情况弹窗 -->
+    <el-dialog
+      title="View Homework"
+      v-model="isDialogVisible_view"
+      width="80%"
+      >
+      <el-table :data="filterTableData" stripe="true" style="width: 100%">
+        <el-table-column label="StudentID" prop="studentId" />
+        <el-table-column label="Name" prop="name" />
+        <el-table-column label="Status" prop="status" />
+        <el-table-column align="right">
+        <template #header>
+            <el-input v-model="search" size="small" placeholder="Type to search" />
+        </template>
+        </el-table-column>
+      </el-table>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="isDialogVisible_view = false">cancel</el-button>
+        </div>
+      </template>
+    </el-dialog>
   </template>
   
   <script lang="ts" setup>
   import { ref, computed, onMounted } from 'vue'
   import { useRouter } from 'vue-router'
   import axios from 'axios';
-  import { Plus } from '@element-plus/icons-vue';
+  import { Plus, View } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
 
   const identity = localStorage.getItem('role');
@@ -103,7 +133,12 @@ const sections = ref<{ problemId: string; title: string; dueTime: string; status
   // 从后端获取作业列表数据
 const fetchAssignments = async () => {
   try {
-    const response = await axios.get(`http://localhost:8048/class/getHomeworkList?classId=${classId.value}`) 
+    const response = await axios.get(`http://localhost:8048/class/getHomeworkList?classId=${classId.value}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }) 
     const assignments = response.data;
 
     sections.value = assignments.map((assignment: any) => ({
@@ -112,6 +147,7 @@ const fetchAssignments = async () => {
       dueTime: assignment.dueTime,
       status: assignment.status,
     }))
+    .sort((a:any, b:any) => new Date(b.dueTime).getTime() - new Date(a.dueTime).getTime());
   } catch (error) {
     console.error('Error fetching assignments:', error)
   }
@@ -120,11 +156,11 @@ const fetchAssignments = async () => {
   // 根据状态返回对应的类名,改变卡片颜色
   const getStatusClass = (status: string): string => {
     switch (status) {
-        case 'Completed':
+        case 'passed':
         return 'completed';
-        case 'In Progress':
+        case 'failed':
         return 'in-progress';
-        case 'Not Started':
+        case 'not tried':
         return 'not-started';
         default:
         return '';
@@ -162,8 +198,6 @@ const fetchAssignments = async () => {
 
   // 创建作业
   const isDialogVisible_create = ref(false);
-  const title = ref<string>("");
-  const content = ref<string>("");
 
   const openDialog_create = () => {
     isDialogVisible_create.value = true;
@@ -177,10 +211,11 @@ const fetchAssignments = async () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8048/class/createAssignment?classId=${classId.value}`,
+        `http://localhost:8048/class/createAssignment`,
         {
-            problemId: problemId.value, // 前端选择的问题ID
-            dueTime: time.value // 前端选择的时间
+          classId: classId.value,
+          problemId: problemId.value, // 前端选择的问题ID
+          dueTime: time.value // 前端选择的时间
         },
         {
           headers: {
@@ -188,6 +223,7 @@ const fetchAssignments = async () => {
           }
         }
       );
+      console.log(response.data);
       ElMessage.success('Created!');
       fetchAssignments();
     } catch (error:any) {
@@ -198,6 +234,49 @@ const fetchAssignments = async () => {
     }
   };
 
+  // 查看作业
+  const isDialogVisible_view = ref(false);
+  interface StuHomework {
+    studentId: string; 
+    name: string; 
+    status: string;
+  }
+  const tableData = ref<StuHomework[]>([]);
+  const search = ref('')
+  const filterTableData = computed(() =>
+    tableData.value.filter(
+        (data:any) =>
+        !search.value ||
+        data.ownerName.toLowerCase().includes(search.value.toLowerCase()) ||
+        data.title.toLowerCase().includes(search.value.toLowerCase())
+    )
+  );
+
+  const currentHomework = ref(0);
+  const openDialog_view = (id:any) => {
+    isDialogVisible_view.value = true;
+    currentHomework.value=id.toString();
+    fetchStuHomework();
+  };
+
+  const fetchStuHomework = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8048/class/getStuHomework?classId=${classId.value}&problemId=${currentHomework.value}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      ) 
+      tableData.value = response.data.map((item:StuHomework) => ({
+        studentId: item.studentId,
+        name: item.name,
+        status: item.status,
+      }));
+    } catch (error) {
+      console.error('Error fetching assignments:', error)
+    }
+  }
 
   onMounted(() => {
     fetchAssignments();

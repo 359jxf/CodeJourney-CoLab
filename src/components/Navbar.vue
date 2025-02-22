@@ -5,7 +5,7 @@
     <div class="logo-container">
       <img src="/unicorn.png" alt="logo" class="logo" />
       <!-- <img src="/name.png" alt="name" class="name" /> -->
-      <p :style="{ color: highlightColor, fontWeight: 800, margin: '10px', fontSize: '20px' }" >CodeJourney Colab</p>
+      <p :style="{ fontWeight: 800, margin: '10px', fontSize: '20px' }" >CodeJourney Colab</p>
     </div>
 
     <!-- 导航菜单 -->
@@ -22,7 +22,7 @@
           class="nav-link"
           :class="{ active: activeIndex === index }"
           @click="setActiveIndex(index)"
-          :style="{ color: activeIndex === index ? highlightColor : textColor }"
+          :style="{ color: activeIndex === index ? '#9BBCC3' : 'black' }"
         >
           {{ link.label }}
         </router-link>
@@ -42,13 +42,8 @@
 </template>
   
   <script lang="ts" setup>
-  import { ref, defineProps, onMounted, watch, onBeforeUnmount, computed } from 'vue';
+  import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
   import { useRoute } from 'vue-router';
-  
-  const props = defineProps<{
-    textColor: string; // 普通文字颜色
-    highlightColor: string; // 高亮文字颜色
-  }>();
   
   const route = useRoute(); // 获取当前路由
   

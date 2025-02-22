@@ -7,12 +7,6 @@
   <script lang="ts" setup>
   import { ref, onMounted, watch } from 'vue';
   import * as echarts from 'echarts';
-  import { defineProps } from 'vue';
-  
-  const props = defineProps<{
-    color: string; // 卡片颜色
-    textColor: string; // 普通文字颜色
-  }>();
 
 
   // 雷达图数据
@@ -59,7 +53,7 @@
     //     textStyle: {
     //       fontSize: 18,
     //       fontWeight: 'bold',
-    //       color: props.textColor || '#333333',
+    //       color:  '#333333',
     //     },
     //   },
       tooltip: {
@@ -69,16 +63,16 @@
     //     data: ['时间占比/%'],
     //     bottom: 0,
     //     textStyle: {
-    //       color: props.textColor || '#333333',
+    //       color: '#333333',
     //     },
     //   },
       radar: {
         shape: 'polygon',
         indicator: indicatorData,
         axisName: {
-          color: props.textColor || '#888888',
+          color: '#888888',
           fontSize: 8,
-          formatter: (value) => value.split('\n').join('\n'), // 允许分行
+          formatter: (value:any) => value.split('\n').join('\n'), // 允许分行
         },
         splitLine: {
           lineStyle: {
@@ -118,8 +112,9 @@
     // 使用配置项显示图表
     myChart.setOption(chartOptions);
   };
-  watch(() => props.color, renderChart);
-  watch(() => props.textColor, renderChart);
+  //这啥东西我乱改的，为了去掉主题
+  watch(() => 'yellow', renderChart);
+  watch(() => 'black', renderChart);
   // 组件挂载后渲染图表
   onMounted(() => {
     renderChart();

@@ -1,9 +1,6 @@
 <template>
     <section class="wrapper-no">
-      <StickyNavbar
-        textColor=var(--color)
-        highlightColor=var(--primary-color)
-      />
+      <StickyNavbar />
       <div  class="container">
         <!-- 侧边导航栏 -->
         <Sidebar
@@ -14,10 +11,10 @@
         <!-- 主内容区 -->
         <div class="main-section">
           <!-- 显示题目信息 -->
-          <div class="problem" v-if="currentProblem">
+          <el-scrollbar class="problem" v-if="currentProblem">
             <h2>{{ currentProblem.title }}</h2>
-            <p>{{ currentProblem.description }}</p>
-          </div>
+            <MarkdownRenderer :markdown-text="currentProblem.description" />
+          </el-scrollbar>
     
           <div class="coding">
             <!-- 代码结果判题器 -->
@@ -33,8 +30,6 @@
               v-model:selectedLanguage="selectedLanguage"
               height= "400px"
               width="780px"
-              color=var(--primary-color)
-              textColor=var(--color)
             />
     
             <!-- 代码运行器 -->
@@ -47,28 +42,20 @@
           </div>
         </div>
       </div>
-      <ThemeSelector :initialTheme="currentTheme" />
     </section>
   </template>
   
   <script setup lang="ts">
   import { ref, watch, onMounted } from 'vue';
   import LanguageAndThemeSelector from '../components/LanguageAndThemeSelector.vue'; 
+  import MarkdownRenderer from '../components/MarkdownRenderer.vue';
   import CodeRunner from '../components/CodeRunner.vue'; 
   import CodeReviewer from '../components/CodeReviewer.vue'; 
-  import ThemeSelector from '../components/BackgroundTheme.vue';
   import StickyNavbar from '../components/Navbar.vue';
   import Sidebar from '../components/Sidebar.vue';
   import axios from 'axios';
   import { useRoute } from 'vue-router';
 
-  // 定义当前主题
-  const currentTheme = ref({
-    background: '#1A1A2E',
-    color: '#FFFFFF',
-    primaryColor: '#0F3460'
-  });
-  
   // 管理在 Main 组件中共享的状态
   const route = useRoute();
   const code = ref<string>("");  // 保存编辑器中的代码
@@ -108,23 +95,7 @@
   
   </script>
   
-  <style>  
-  :root {
-    --background: #1a1a2e;
-    --color: #ffffff;
-    --primary-color: #0f3460;
-  }
-
-  body {
-    margin: 0;
-    box-sizing: border-box;
-    font-family: "poppins", sans-serif;
-    background: var(--background);
-    color: var(--color);
-    letter-spacing: 1px;
-    transition: background 0.2s ease;
-  }
-
+  <style scoped>  
   .wrapper-no {
     margin-top: 50px;
   }
@@ -146,10 +117,13 @@
     padding: 30px;
     display: flex;
     justify-content: space-around;
+    gap: 20px;
+    height: 100vh;
   }
   
   .problem {
     width: 45%;
+    padding: 0 20px;
   }
 
   .coding {

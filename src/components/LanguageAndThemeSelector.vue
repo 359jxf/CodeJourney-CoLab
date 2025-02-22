@@ -1,10 +1,10 @@
 <template>
-  <div class="flex" :style="{backgroundColor: props.color,width: props.width+10} ">
+  <div class="flex" :style="flexStyle">
     <div class="selector">
       <div class="inner-selector">
         <!-- 语言选择器 -->
         <div>
-          <label for="language"><el-icon :style="{color: props.textColor} "><Place /></el-icon></label>
+          <label for="language"><el-icon :style="iconStyle"><Place /></el-icon></label>
           <el-select v-model="localSelectedLanguage" placeholder="language" size="small" style="width: 100px" @change="updateCM">
             <el-option
               v-for="item in languageOptions"
@@ -17,7 +17,7 @@
 
         <!-- 主题选择器 -->
         <div>
-          <label for="theme"><el-icon :style="{color: props.textColor} " ><Picture /></el-icon></label>
+          <label for="theme"><el-icon :style="iconStyle" ><Picture /></el-icon></label>
           <el-select v-model="selectedTheme" placeholder="theme" size="small" style="width: 100px" @change="updateCM">
             <el-option
               v-for="item in themeOptions"
@@ -30,7 +30,7 @@
       </div>
 
       <div>
-        <el-icon :style="{color: props.textColor} "><More /></el-icon>
+        <el-icon :style="iconStyle"><More /></el-icon>
       </div>
     </div>
     <!-- CodeMirror 编辑器 -->
@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, computed } from 'vue';
 import { Codemirror } from "vue-codemirror";
 import { oneDark } from "@codemirror/theme-one-dark";
 import { python } from "@codemirror/lang-python";
@@ -64,8 +64,6 @@ const props = defineProps<{
   selectedLanguage: string;
   height: string;
   width: string;
-  color: string;
-  textColor: string;
 }>();
 
 // Emit 用于向父组件发送更新事件
@@ -91,6 +89,23 @@ const themeOptions = [
   { value: 'oneDark', label: 'One Dark' },
   { value: 'customLight', label: 'Custom Light' },
 ];
+
+// 根据主题选择动态改变背景色
+const flexStyle = computed(() => {
+  return selectedTheme.value === 'oneDark'
+    ? { backgroundColor: 'rgba(40, 44, 52, 1)' }  // 半透明黑色
+    : selectedTheme.value === 'customLight'
+    ? { backgroundColor: 'rgba(255, 255, 255, 1)' }  // 半透明白色
+    : {};
+});
+
+const iconStyle = computed(() => {
+  return selectedTheme.value === 'oneDark'
+    ? { color: 'rgba(255,255,255, 1)' }  // 半透明黑色
+    : selectedTheme.value === 'customLight'
+    ? { color: 'rgba(40, 44, 52, 1)' }  // 半透明白色
+    : {};
+});
 
 // CodeMirror 扩展配置
 let extensions = [python(), oneDark];

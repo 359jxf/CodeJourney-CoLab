@@ -34,7 +34,7 @@
     controls.dampingFactor = 0.1; // 阻尼系数
     controls.rotateSpeed = 0.5; // 调整旋转速度
   
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.7); 
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.5); 
     scene.add(ambientLight);
   
     // 加载 GLTF 模型

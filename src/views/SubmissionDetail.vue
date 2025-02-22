@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-      <div class="wrapper-2">
+      <el-card class="wrapper-2">
         <div v-if="submissionDetail">
           <strong style="font-size:25px;">This is your No.{{ submissionDetail.attemptNum }} try</strong>
           <p style="font-size: 10px;color: #7c7c7c;">Submitted at {{ submissionDetail.submitTime }} and took {{ submissionDetail.totalTime }} seconds</p>
@@ -14,14 +14,21 @@
             <li><strong>Code:</strong> <pre class="code">{{ submissionDetail.code }}</pre></li>
           </ul>
         </div>
-    </div>
+        <template #footer>
+          <div class="dialog-footer">
+            <el-button class="try" type="primary" @click="goto()">
+              New Try
+            </el-button>
+          </div>
+        </template>
+      </el-card>
     </div>
   </template>
   
   <script setup lang="ts">
   import { ref, onMounted, watch } from 'vue';
   import axios from 'axios';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   
   // 获取路由中的参数
   const route = useRoute();
@@ -60,6 +67,15 @@
       }
     }
   };
+
+  // 前往刷题快捷键
+  const router = useRouter();
+  const goto =()=>{
+    router.push({
+        path: '/normalOJ',
+        query: { currentProblemId: problemId.value } 
+    })
+  }
   
   // 在路由变化时更新问题ID和尝试编号
   watch(() => route.query.problemId, (newProblemId) => {
@@ -85,16 +101,14 @@
 
 <style scoped>
 .wrapper {
+  padding: 100px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
 .wrapper-2 {
   padding: 20px;
-  border-radius: 5px;
-  background-color: white;
   color: #3d3d3d;
 }
 
@@ -103,5 +117,11 @@
   border-radius: 5px;
   padding: 5px;
   color: #dadada;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end; 
+  padding: 10px; 
 }
 </style>
