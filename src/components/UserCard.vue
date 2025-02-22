@@ -122,7 +122,7 @@
   const name = ref(props.user.name);
   const email = ref(props.user.email);
   const isDialogVisible = ref(false);
-  const role = localStorage.getItem('role');
+  const role = localStorage.getItem('role')=='TEACHER'?'teacher':'student';
   const isDialogVisible2 = ref(false);
 
   const setActiveSection = (section: string) => {
@@ -240,6 +240,7 @@
       });
       console.log(response.data);
       ElMessage.success('You are Certified!');
+      localStorage.setItem('role','TEACHER');
       isDialogVisible2.value = false; 
     } catch (error:any) {
       if(error.response){

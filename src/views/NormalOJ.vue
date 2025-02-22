@@ -11,10 +11,10 @@
         <!-- 主内容区 -->
         <div class="main-section">
           <!-- 显示题目信息 -->
-          <div class="problem" v-if="currentProblem">
+          <el-scrollbar class="problem" v-if="currentProblem">
             <h2>{{ currentProblem.title }}</h2>
-            <p>{{ currentProblem.description }}</p>
-          </div>
+            <MarkdownRenderer :markdown-text="currentProblem.description" />
+          </el-scrollbar>
     
           <div class="coding">
             <!-- 代码结果判题器 -->
@@ -48,6 +48,7 @@
   <script setup lang="ts">
   import { ref, watch, onMounted } from 'vue';
   import LanguageAndThemeSelector from '../components/LanguageAndThemeSelector.vue'; 
+  import MarkdownRenderer from '../components/MarkdownRenderer.vue';
   import CodeRunner from '../components/CodeRunner.vue'; 
   import CodeReviewer from '../components/CodeReviewer.vue'; 
   import StickyNavbar from '../components/Navbar.vue';
@@ -116,10 +117,13 @@
     padding: 30px;
     display: flex;
     justify-content: space-around;
+    gap: 20px;
+    height: 100vh;
   }
   
   .problem {
     width: 45%;
+    padding: 0 20px;
   }
 
   .coding {

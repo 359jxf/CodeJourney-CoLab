@@ -80,7 +80,8 @@ import { ElMessage } from 'element-plus';
 import axios from 'axios'
 
 const identity = localStorage.getItem('role');
-const router = useRouter()
+// const identity = ref('TEACHER');
+const router = useRouter();
 
 interface Class {
   id: number;
@@ -108,7 +109,7 @@ const filterTableData = computed(() =>
         });
       tableData.value = response.data.map((item:Class) => ({
         id: item.id,
-        className: item.className,
+        name: item.className,
         teacher: item.teacher,
       }));
     } catch (error) {
@@ -148,7 +149,7 @@ const filterTableData = computed(() =>
       const response = await axios.post(
         `http://localhost:8048/class/join`,
         {
-          joinCode: joinCode.value
+          classCode: joinCode.value
         },
         {
           headers: {
@@ -163,7 +164,7 @@ const filterTableData = computed(() =>
     })
     } catch (error:any) {
       console.error("Error:", error.response || error.message);
-      ElMessage.error('Failed to join the file.');
+      ElMessage.error('Failed to join the class.');
     } finally {
       isDialogVisible_join.value = false; // 关闭弹窗
     }
@@ -185,10 +186,7 @@ const filterTableData = computed(() =>
 
     try {
       const response = await axios.post(
-        `http://localhost:8048/class/create`,
-        {
-          className: classname.value
-        },
+        `http://localhost:8048/class/create?className=${classname.value}`,{},
         {
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`

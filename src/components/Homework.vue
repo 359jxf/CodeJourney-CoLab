@@ -120,8 +120,8 @@
   import { Plus, View } from '@element-plus/icons-vue';
   import { ElMessage } from 'element-plus';
 
-  // const identity = localStorage.getItem('role');
-const identity = ref('TEACHER');
+  const identity = localStorage.getItem('role');
+// const identity = ref('TEACHER');
 // Props 接收从父组件传递过来的数据
 const props = defineProps<{ 
   classId: number;
@@ -133,7 +133,12 @@ const sections = ref<{ problemId: string; title: string; dueTime: string; status
   // 从后端获取作业列表数据
 const fetchAssignments = async () => {
   try {
-    const response = await axios.get(`http://localhost:8048/class/getHomeworkList?classId=${classId.value}`) 
+    const response = await axios.get(`http://localhost:8048/class/getHomeworkList?classId=${classId.value}`,
+        {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }) 
     const assignments = response.data;
 
     sections.value = assignments.map((assignment: any) => ({
@@ -142,6 +147,7 @@ const fetchAssignments = async () => {
       dueTime: assignment.dueTime,
       status: assignment.status,
     }))
+    .sort((a:any, b:any) => new Date(b.dueTime).getTime() - new Date(a.dueTime).getTime());
   } catch (error) {
     console.error('Error fetching assignments:', error)
   }
@@ -150,11 +156,11 @@ const fetchAssignments = async () => {
   // 根据状态返回对应的类名,改变卡片颜色
   const getStatusClass = (status: string): string => {
     switch (status) {
-        case 'Completed':
+        case 'passed':
         return 'completed';
-        case 'In Progress':
+        case 'failed':
         return 'in-progress';
-        case 'Not Started':
+        case 'not tried':
         return 'not-started';
         default:
         return '';
@@ -205,10 +211,11 @@ const fetchAssignments = async () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8048/class/createAssignment?classId=${classId.value}`,
+        `http://localhost:8048/class/createAssignment`,
         {
-            problemId: problemId.value, // 前端选择的问题ID
-            dueTime: time.value // 前端选择的时间
+          classId: classId.value,
+          problemId: problemId.value, // 前端选择的问题ID
+          dueTime: time.value // 前端选择的时间
         },
         {
           headers: {
@@ -216,6 +223,7 @@ const fetchAssignments = async () => {
           }
         }
       );
+      console.log(response.data);
       ElMessage.success('Created!');
       fetchAssignments();
     } catch (error:any) {

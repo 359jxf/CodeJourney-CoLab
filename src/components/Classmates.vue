@@ -38,6 +38,7 @@
     </div>
     <template #footer>
       <div class="dialog-footer">
+        <p style="color: red;font-size: small;">NOTE: valid in 10 minutes</p>
         <el-button @click="dialogVisible = false" type="primary">Close</el-button>
       </div>
     </template>
@@ -51,9 +52,10 @@
   import axios from 'axios';
 
   const identity = localStorage.getItem('role');
+  // const identity=ref('TEACHER');
   
   interface Stu {
-    name: string;
+    username: string;
     email: string;
   }
   const tableData = ref<Stu[]>([]);
@@ -70,13 +72,9 @@
   // 获取班级成员列表
   const fetchStuList = async()=> {
     try {
-      const response = await axios.get(`http://localhost:8048/class/getstulist?classId=${classId.value}`,{
-          headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
+      const response = await axios.get(`http://localhost:8048/class/getstulist?classId=${classId.value}`);
       tableData.value = response.data.map((item:Stu) => ({
-        name: item.name,
+        name: item.username,
         email: item.email,
       }));
     } catch (error) {
@@ -114,7 +112,7 @@
         dialogVisible.value = true; 
         } catch (error:any) {
         if(error.response){
-            ElMessage.error(error.response.data);
+            ElMessage.error('ERROR:check the redis server');
         }
         console.error('Error fetching inviteCode:', error);
         inviteCode.value = '';
@@ -137,4 +135,13 @@
   };
 
   </script>
+
+<style scoped>
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+</style>
   

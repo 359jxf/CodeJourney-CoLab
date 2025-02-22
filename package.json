@@ -19,6 +19,8 @@
     "element-plus": "^2.8.7",
     "eventemitter3": "^5.0.1",
     "events": "^3.3.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-highlightjs": "^4.2.0",
     "reconnecting-websocket": "^4.4.0",
     "sharedb": "^5.1.1",
     "sortablejs": "^1.15.3",
@@ -32,6 +34,7 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
+    "@types/markdown-it": "^14.1.2",
     "@types/node": "^22.9.0",
     "@types/sharedb": "^5.1.0",
     "@types/three": "^0.169.0",

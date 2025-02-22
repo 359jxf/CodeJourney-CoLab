@@ -77,42 +77,27 @@ const handleRegister = async () => {
     });
 
     if (response.status === 200) {
+      ElMessage.success('Registration successful');
       console.log('Registration successful:', response.data);
       // 注册成功后跳转到首页或登录页
       router.push('/login');
     } else {
       console.error('Registration failed:', response.data);
-      ElMessage({
-        message: 'Registration failed!',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error('Registration failed!');
     }
   } catch (error:any) {
     if (error.response) {
       // 这是 Axios 处理的响应错误
       console.log('Response error:', error.response);
-      ElMessage({
-        message: error.response.data|| 'An error occurred during login.',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error(error.response.data|| 'An error occurred during login.');
     } else if (error.request) {
       // 请求已发送，但没有收到响应
       console.log('Request error:', error.request);
-      ElMessage({
-        message: 'No response from server.',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error('No response from server.');
     } else {
       // 其他错误
       console.log('Other error:', error.message);
-      ElMessage({
-        message: 'An unknown error occurred.',
-        type: 'error',
-        duration: 3000, 
-      })
+      ElMessage.error('An unknown error occurred.');
     }
   }
 };

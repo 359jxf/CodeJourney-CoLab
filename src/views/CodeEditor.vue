@@ -11,6 +11,11 @@
         width="200px"
       />
       <div class="code-section">
+        <div class="title">
+          <p><strong>Title:</strong> {{ fileInfo.title }}</p>
+          <p><strong>Owner:</strong> {{ fileInfo.owner }}</p>
+          <p><strong>Create Time:</strong> {{ fileInfo.createdAt }}</p>
+        </div>
         <!-- 语言选择器和主题选择器以及代码编辑器 -->
         <SharedbCodeMirror
           v-if="documentId !== 0"
@@ -37,8 +42,10 @@ import SharedbCodeMirror from '../components/SharedbCodeMirror.vue';
 import CodeRunner from '../components/CodeRunner.vue'; 
 import StickyNavbar from '../components/Navbar.vue';
 import UserList from '../components/PeopleList.vue';
+import axios from 'axios';
 // import ChatApp from '../components/ChatApp.vue';
 import { useRoute } from 'vue-router';
+import { ElMessage } from 'element-plus';
   
 // 获取路由中的参数
 const route = useRoute();
@@ -48,10 +55,36 @@ const documentId = ref<number>(0);
 const code = ref<string>("");  // 保存编辑器中的代码
 const selectedLanguage = ref<string>("python");  // 保存用户选择的语言
 
+const fileInfo = ref({
+  title: '',
+  owner: '',
+  createdAt: '',
+});
+
+const fetchFileInfo = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8048/document/getfileinfo?documentId=${documentId.value}`,{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    fileInfo.value = {
+      title: response.data.title,
+      owner: response.data.ownerName,
+      createdAt: response.data.createTime,
+    };
+    
+  } catch (error) {
+    ElMessage.error('Error fetching file infomation');
+    console.error('Error fetching file infomation:', error)
+  }
+}
+
 onMounted(() => {
   // 初始化从路由获取的参数
   console.log(route.query.documentId);
   documentId.value = Number(route.query.documentId);
+  fetchFileInfo();
 });
 </script>
 
@@ -78,6 +111,11 @@ onMounted(() => {
   flex-direction: column;
   justify-content: center; 
   align-items: center;  
+}
+
+.title {
+  display: flex;
+  gap:20px;
 }
 
 .chat-section {

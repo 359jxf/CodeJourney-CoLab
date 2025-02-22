@@ -57,22 +57,21 @@
   const contents = ref<{ id: string; title: string; item: { text: string; time: string; author: string } }[]>([])
   const activeNames = ref(['1'])
   const handleChange = (val: CollapseModelValue) => {
-    console.log(val)
   }
 
   // 从后端获取通知列表数据
 const fetchNotifications = async () => {
   try {
     const response = await axios.get(`http://localhost:8048/class/getNotice?classId=${classId.value}`) 
-    const notifications = response.data
+    const notifications = response.data;
 
     contents.value = notifications.map((notification: any, index: number) => ({
       id: `${index + 1}`,
       title: notification.title,
       item: {
         text: notification.content,
-        time: notification.time,
-        author: notification.author,
+        time: notification.createTime,
+        author: notification.teacherName,
       },
     }))
   } catch (error) {
@@ -101,8 +100,9 @@ const fetchNotifications = async () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:8048/class/createNotice?classId=${classId.value}`,
+        `http://localhost:8048/class/createNotice`,
         {
+          classId: classId.value,
           title: title.value,
           content: content.value
         },
