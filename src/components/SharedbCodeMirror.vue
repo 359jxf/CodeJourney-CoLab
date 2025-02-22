@@ -275,10 +275,12 @@ onMounted(async () => {
     console.error('Error during initialization:', error);
   }
 });
-
 const initializeShareDB = async()=> {
-  
-    const socket = new ReconnectingWebSocket(`ws://localhost:4242`,[],{
+  // 示例使用
+    const secretKey = 'codejourneycolab#secret*key-wohenshenmiwohenshenmi';
+    const userId = tryGetIdFromToken(localStorage.getItem('token'),secretKey);
+    const docCode = createSharingCode(documentId.value);
+    const socket = new ReconnectingWebSocket(`ws://localhost:4242?userId=${userId}&docCode=${docCode}`,[],{
       maxEnqueuedMessages:0
     });
     // 监听 WebSocket 连接错误
@@ -354,6 +356,58 @@ const initializeShareDB = async()=> {
     });
   
 };
+
+const crypto = require('crypto');
+
+function createSharingCode(documentId) {
+  try {
+    const data = documentId.toString();
+    const key = "d0_n0t_PUbL1SH_TH1S_K3Y";
+
+    // 填充密钥到 16 字节（AES-128）
+    const paddedKey = padKeyToValidLength(key);
+
+    // 创建 AES 加密器
+    const cipher = crypto.createCipheriv('aes-128-ecb', paddedKey, null);
+
+    // 加密数据
+    let encrypted = cipher.update(data, 'utf8', 'base64');
+    encrypted += cipher.final('base64');
+
+    console.log(encrypted);
+    return encrypted;
+  } catch (e) {
+    throw new Error(`Failed to encode: ${e.message}`);
+  }
+}
+
+function padKeyToValidLength(key) {
+  const blockSize = 16; // AES-128 块大小为 16 字节
+  const paddingLength = blockSize - (key.length % blockSize);
+  const padding = '\0'.repeat(paddingLength);
+  return (key + padding).substring(0, blockSize);
+}
+
+const jwt = require('jsonwebtoken');
+
+function tryGetIdFromToken(token, secretKey) {
+  try {
+    // 验证并解析 JWT
+    const decoded = jwt.verify(token, secretKey);
+    // 从解析结果中获取 id 字段
+    const id = decoded.id;
+    if (typeof id === 'undefined') {
+      throw new Error('Token does not contain an "id" field.');
+    }
+    return id;
+  } catch (error) {
+    // 若验证或解析过程出错，抛出错误
+    throw new Error(`Failed to extract id from token: ${error.message}`);
+  }
+}
+
+
+
 
 // // 光标
 // let presence: ShareDB.Presence;
