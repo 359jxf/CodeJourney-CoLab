@@ -60,7 +60,8 @@
         { label: 'Relating Algorithm', path: '/aboutalgorithm' }
       ]
     },
-    { label: 'Me', path: '/profile' }
+    { label: 'Me', path: '/profile' },
+    { label: 'Blog', path: '/blog' }, // 添加博客链接
   ];
   
   // 当前激活的导航项索引

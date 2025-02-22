@@ -13,6 +13,10 @@ const NormalOJ = () => import('../views/NormalOJ.vue');
 const MyProfile = () => import('../views/MyProfile.vue');
 const SubmissionDetail = () => import('../views/SubmissionDetail.vue');
 const ClassDetail = () => import('../views/ClassDetail.vue');
+const BlogHome = () => import('../views/BlogHome.vue');
+const BlogDetail = () => import('../views/BlogDetail.vue');
+const MyBlog = () => import('../views/MyBlog.vue');
+const Editor = () => import('../views/Editor.vue');
 
 // 定义路由
 const routes: Array<RouteRecordRaw> = [
@@ -82,6 +86,26 @@ const routes: Array<RouteRecordRaw> = [
     name: 'ClassDetail',
     component: ClassDetail,
     meta: { requiresAuth: true } 
+  },
+  {
+    path: '/blog',
+    name: 'BlogHome',
+    component: BlogHome,
+  },
+  {
+    path: '/blog/:id',
+    name: 'BlogDetail',
+    component: BlogDetail, 
+  },
+  {
+    path: '/my-blog',
+    name: 'myBlog',
+    component: MyBlog
+  },
+  {
+    path: '/editor',
+    name: 'Editor',
+    component: Editor
   }
 ];
 
@@ -92,21 +116,21 @@ const router = createRouter({
 });
 
 // 全局路由守卫
-router.beforeEach((to, from, next) => {
-  // 检查路由是否需要登录
-  if (to.meta.requiresAuth) {
-    const isLoggedIn = localStorage.getItem('token'); // 检查本地存储中的 token
-    if (!isLoggedIn) {
-      // 如果没有登录，跳转到登录页面
-      next('/login');
-    } else {
-      // 如果已登录，继续导航
-      next();
-    }
-  } else {
-    // 如果不需要登录，直接继续导航
-    next();
-  }
-});
+// router.beforeEach((to, from, next) => {
+//   // 检查路由是否需要登录
+//   if (to.meta.requiresAuth) {
+//     const isLoggedIn = localStorage.getItem('token'); // 检查本地存储中的 token
+//     if (!isLoggedIn) {
+//       // 如果没有登录，跳转到登录页面
+//       next('/login');
+//     } else {
+//       // 如果已登录，继续导航
+//       next();
+//     }
+//   } else {
+//     // 如果不需要登录，直接继续导航
+//     next();
+//   }
+// });
 
 export default router;
