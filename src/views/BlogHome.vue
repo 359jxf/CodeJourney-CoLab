@@ -1,9 +1,5 @@
 <template>
-    <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
-    />
-    <ThemeSelector :initialTheme="currentTheme" />
+    <StickyNavbar/>
     <div class="blog-home">
       <div class="sidebar-container">
         <el-menu
@@ -78,8 +74,7 @@
               </div>
               <div class="user-details">
                 <h3 class="username">{{ user.username }}</h3>
-                <el-button @click="goToMyBlog" type="primary" size="small">My Blog
-                  <el-icon><ArrowRight /></el-icon>
+                <el-button @click="goToMyBlog" type="primary" size="small">My Blog >
                 </el-button>
               </div>
               <div class="user-stats">
@@ -113,7 +108,6 @@
   
   <script lang="ts" setup>
   import { onMounted, ref, computed } from 'vue';
-  import ThemeSelector from '../components/BackgroundTheme.vue';
   import StickyNavbar from '../components/Navbar.vue';
   import { useRouter } from 'vue-router';
   import { TrendCharts } from '@element-plus/icons-vue'
@@ -312,16 +306,14 @@
   <style scoped>
   .blog-home {
     display: flex;
-    margin-top: 80px;
+    margin: 80px 0 40px 0;
     justify-content: center; 
-    background-color: rgb(26,26,46);
   }
   
   .sidebar-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 0px;
     margin-left: 1%;
     margin-right: 1%;
     top: 80px; 
@@ -336,7 +328,6 @@
     height: auto;
     border-radius: 2px;
     border-right: none;
-    background-color: rgb(73, 11, 11);
   }
   .type-icon{
     width: 40px;
@@ -356,18 +347,15 @@
     font-size: large;
     border-left: 3px solid transparent;
   }
-  .el-icon-edit{
-    color: rgb(13, 20, 153);
-  }
   .el-menu-item.is-active {
-    background-color: rgb(207, 226, 249);
-    color: darkblue;
-    border-left: 3px solid darkblue; 
+    background-color: #e3f1ff;
+    color: #409EFF;
+    border-left: 3px solid #409EFF; 
   }
   .el-menu-item:hover {
-    background-color: rgb(207, 226, 249);
-    color: darkblue;
-    border-left: 3px solid darkblue; 
+    background-color: #e3f1ff;
+    color: #409EFF;
+    border-left: 3px solid #409EFF; 
   }
   
   .right-sidebar-container {
@@ -387,14 +375,6 @@
     border: none;
     position: relative;
     width: 60%;
-    overflow-y: auto; /* 允许垂直滚动 */
-    -ms-overflow-style: none; /* 适用于 Internet Explorer 和旧版 Edge */
-    scrollbar-width: none; /* 适用于 Firefox */
-    max-height: calc(100vh - 80px); /* 设置最大高度 */
-  }
-  .article-list::-webkit-scrollbar{
-    width: 0; /* 隐藏滚动条 */
-    background: transparent; 
   }
   
   .post-card {
@@ -459,7 +439,7 @@
 
   /* 修改图标样式 */
   .post-stats :deep(.el-icon) {
-    color: rgb(64, 64, 178);
+    color: #409EFF;
     font-size: 18px; 
   }
   .post-stats span {
@@ -478,8 +458,8 @@
     font-size: 12px;
     padding: 2px 6px;
     border-radius: 4px;
-    color: rgb(94, 94, 103);
-    background-color: rgb(219, 229, 242);
+    color: #409EFF;
+    background-color: #e2f0ff;
   }
   
   .post-image {
@@ -506,12 +486,6 @@
     object-fit: cover;
   }
   
-  .sidebar {
-    overflow: auto; /* 启用滚动功能 */
-    -ms-overflow-style: none; /* 适用于 Internet Explorer 和旧版 Edge */
-    scrollbar-width: none; /* 适用于 Firefox */
-}
-
 .article-sort {
   padding: 0px;
   border-bottom: 1px solid #eee;
@@ -541,16 +515,16 @@
 }
 
 :deep(.el-radio-group .el-radio-button__inner:hover) {
-  color: darkblue;
-  border-bottom: 4px solid darkblue !important;
+  color: #409EFF;
+  border-bottom: 4px solid #409EFF !important;
   background-color: white !important;
   transition: all 0s ease;
 }
 
 :deep(.el-radio-group .el-radio-button.is-active .el-radio-button__inner) {
   background-color: white !important;
-  color: darkblue !important;
-  border-bottom: 4px solid darkblue !important;
+  color: #409EFF !important;
+  border-bottom: 4px solid #409EFF !important;
   box-shadow: none !important;
 }
 
@@ -577,7 +551,6 @@
   width: 95%;
   height: 95%;
   border-radius: 50%;
-  border: 3px solid rgb(14, 50, 134);
   object-fit: cover;
 }
 
@@ -595,16 +568,16 @@
   border: none;
   border-radius: 0;
   background-color: white;
-  color:  rgb(14, 50, 134);
+  color:  #409EFF;
 
   font-size: 0.8em !important;
 }
 .user-details .el-button:hover{
-  border-bottom: 2px solid rgb(14, 50, 134);
+  border-bottom: 2px solid #409EFF;
   transform:all 0s ease;
 }
-:deep(.user-details .el-button .el-icon){
-  color: rgb(14, 50, 134);
+:deep(.user-details .el-button){
+  color: #409EFF;
 }
 .username {
   margin: 0;
@@ -655,7 +628,7 @@
 }
 
 .hot-post-item:hover .post-title {
-  color: rgb(14, 50, 134);
+  color: #409EFF;
 }
 
 .post-rank {

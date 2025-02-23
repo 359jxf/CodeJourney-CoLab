@@ -1,9 +1,5 @@
 <template>
-  <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
-  />
-  <ThemeSelector :initialTheme="currentTheme" />
+  <StickyNavbar/>
   
   <div class="editor-container">
     <div class="editor-header">
@@ -65,14 +61,12 @@
     <div class="editor-footer">
       <el-button 
         @click="goBack"
-        class="cancel-button"
       >
         Cancel
       </el-button>
       <el-button 
         type="primary" 
         @click="publishArticle"
-        class="publish-button"
       >
         Publish
       </el-button>
@@ -83,7 +77,6 @@
 <script setup lang="ts">
 import { ref, shallowRef, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import ThemeSelector from '../components/BackgroundTheme.vue'
 import StickyNavbar from '../components/Navbar.vue'
 import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
 import '@wangeditor/editor/dist/css/style.css'
@@ -260,24 +253,6 @@ const publishArticle = () => {
   padding: 30px 0 0;
   margin-top: 20px;
   border-top: 1px solid #eee;
-}
-
-.cancel-button,
-.publish-button {
-  padding: 12px 25px;
-  font-size: 16px;
-}
-
-.cancel-button {
-  border-color: #dcdfe6;
-}
-
-.publish-button {
-  background-color:rgb(48, 48, 161);
-}
-
-.publish-button:hover {
-  background-color: var(--el-color-primary-dark-2);
 }
 
 /* 响应式设计 */

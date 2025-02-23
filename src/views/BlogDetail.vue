@@ -1,19 +1,7 @@
 <template>
    <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
     />
-    <ThemeSelector :initialTheme="currentTheme" />
   <div class="blog-detail">
-    <!-- 添加返回按钮 -->
-    <el-button 
-      class="back-button" 
-      circle 
-      @click="goBack"
-    >
-      <el-icon><ArrowLeft /></el-icon>
-    </el-button>
-
     <!-- 左侧操作栏 -->
     <div class="action-bar">
       <div class="action-buttons">
@@ -145,11 +133,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
-import ThemeSelector from '../components/BackgroundTheme.vue';
 import StickyNavbar from '../components/Navbar.vue';
 import { useRoute, useRouter } from 'vue-router';
 import MarkdownIt from 'markdown-it';
-import { ArrowLeft } from '@element-plus/icons-vue';
 
 const md = new MarkdownIt();
 const route = useRoute();
@@ -337,10 +323,6 @@ const submitComment = () => {
   newComment.value = ''; // 清空输入框
 };
 
-const goBack = () => {
-  router.back();
-};
-
 onMounted(() => {
   // 这里可以根据路由参数获取文章详情
   const postId = route.params.id;
@@ -351,33 +333,10 @@ onMounted(() => {
 <style scoped>
 .blog-detail {
   display: flex;
-  margin-top: 80px;
+  margin: 80px 0 40px 0;
   padding: 0 20px;
   gap: 20px;
   justify-content: space-between;
-}
-
-.back-button {
-  position: fixed;
-  top: 80px;
-  left: 20px;
-  z-index: 100;
-  background-color: white;
-  border: 2px solid var(--primary-color);
-  transition: all 0.3s ease;
-}
-
-.back-button:hover {
-  background-color: var(--primary-color);
-}
-
-.back-button:hover :deep(.el-icon) {
-  color: white;
-}
-
-.back-button :deep(.el-icon) {
-  font-size: 20px;
-  color: var(--primary-color);
 }
 
 .action-bar {
@@ -398,7 +357,7 @@ onMounted(() => {
 .action-button {
   display: flex;
   flex-direction: row;
-  
+  border: none;
   align-items: center;
   width: 5vw;
   height: 10vh;
@@ -406,7 +365,7 @@ onMounted(() => {
   padding: 0;
 }
 .action-button:hover{
-  background-color: #a8c1ec;
+  background-color: #d2e8ff;
 }
 .action-button .el-icon{
   width: 100%;
@@ -539,11 +498,11 @@ onMounted(() => {
 }
 
 .action-button.is-liked {
-  background-color: #a8c1ec;
+  background-color: rgb(255, 207, 50);
 }
 
 .action-button.is-liked .el-icon {
-  color: #0066ff;
+  color: #ffffff;
 }
 
 /* 评论样式 */
@@ -612,6 +571,5 @@ onMounted(() => {
 .comment-input-container .el-button {
   margin-top: 10px;
   float: right;
-  background-color: #0066ff;
 }
 </style>

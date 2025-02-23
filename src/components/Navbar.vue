@@ -52,6 +52,7 @@
     { label: 'Home', path: '/' },
     { label: 'Online-Coding', path: '/editlist' },
     { label: 'Practices', path: '/problemlist' },
+    { label: 'Blog', path: '/blog' }, 
     {
       label: 'About-Us',
       path: '/about',
@@ -61,7 +62,6 @@
       ]
     },
     { label: 'Me', path: '/profile' },
-    { label: 'Blog', path: '/blog' }, // 添加博客链接
   ];
   
   // 当前激活的导航项索引

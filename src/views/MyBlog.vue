@@ -1,9 +1,5 @@
 <template>
-  <StickyNavbar
-    textColor=var(--color)
-    highlightColor=var(--primary-color)
-  />
-  <ThemeSelector :initialTheme="currentTheme" />
+  <StickyNavbar/>
   <div class="my-blog">
     <!-- 左侧文章分类 -->
     <div class="sidebar-container">
@@ -105,7 +101,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import ThemeSelector from '../components/BackgroundTheme.vue';
 import StickyNavbar from '../components/Navbar.vue';
 
 const router = useRouter();
@@ -193,7 +188,7 @@ const goToEditor = () => {
 <style scoped>
 .my-blog {
   display: flex;
-  margin-top: 80px;
+  margin: 80px 0 40px 0;
   padding: 0 20px;
   gap: 20px;
   justify-content: space-between;
@@ -217,7 +212,6 @@ const goToEditor = () => {
     height: auto;
     border-radius: 2px;
     border-right: none;
-    background-color: rgb(73, 11, 11);
   }
   .type-icon{
     width: 40px;
@@ -237,18 +231,15 @@ const goToEditor = () => {
     font-size: large;
     border-left: 3px solid transparent; 
   }
-  .el-icon-edit{
-    color: rgb(13, 20, 153);
-  }
   .el-menu-item.is-active {
-    background-color: rgb(207, 226, 249);
-    color: darkblue;
-    border-left: 3px solid darkblue; 
+    background-color: #e3f1ff;
+    color: #409EFF;
+    border-left: 3px solid #409EFF; 
   }
   .el-menu-item:hover {
-    background-color: rgb(207, 226, 249);
-    color: darkblue;
-    border-left: 3px solid darkblue; 
+    background-color: #e3f1ff;
+    color: #409EFF;
+    border-left: 3px solid #409EFF; 
   }
 
 .info-sidebar {
@@ -310,10 +301,6 @@ const goToEditor = () => {
   position: sticky;
   top: 80px;
   height: fit-content;
-}
-
-.type-menu {
-  border-right: none;
 }
 
 .type-icon {
@@ -382,7 +369,7 @@ const goToEditor = () => {
   }
 
 .post-stats :deep(.el-icon) {
-color: rgb(64, 64, 178);
+color: #409EFF;
 font-size: 18px; 
 }
 
@@ -421,18 +408,18 @@ font-size: 18px;
   width: 60px;
   height: 60px;
   background-color: white;
-  border: 2px solid #0066ff;
+  border: 2px solid #409EFF;
   transition: all 0.3s ease;
 }
 
 .plus-button:hover {
   transform: scale(1.1);
-  background-color: #0066ff;
+  background-color: #409EFF;
 }
 
 .plus-icon {
   font-size: 30px;
-  color: #0066ff;
+  color: #409EFF;
 }
 
 .plus-button:hover .plus-icon {
