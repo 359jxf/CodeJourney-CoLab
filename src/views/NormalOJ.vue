@@ -14,6 +14,7 @@
           <el-scrollbar class="problem" v-if="currentProblem">
             <h2>{{ currentProblem.title }}</h2>
             <MarkdownRenderer :markdown-text="currentProblem.description" />
+            <el-button type="text">answer</el-button>
           </el-scrollbar>
     
           <div class="coding">

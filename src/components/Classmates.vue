@@ -13,10 +13,15 @@
         <el-table-column label="Name" prop="name" />
         <el-table-column label="Email" prop="email" />
         <el-table-column align="right">
-        <template #header>
-            <el-input v-model="search" size="small" placeholder="Type to search" />
-        </template>
-        </el-table-column>
+            <template #header>
+              <el-input v-model="search" size="small" placeholder="Type to search" />
+            </template>
+            <template #default="scope">
+              <el-button size="small" type="primary" @click="handleChat(scope.$index, scope.row)">
+                Chat
+              </el-button>
+            </template>
+          </el-table-column>
     </el-table>
 
     <!-- 弹窗展示邀请码 -->

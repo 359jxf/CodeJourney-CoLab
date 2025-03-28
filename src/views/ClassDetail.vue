@@ -43,6 +43,11 @@
               :classId=classId
             />
         </div>
+        <div v-if="activeSection === 'Group'">
+            <ClassChat
+              :classId=classId
+            />
+        </div>
       </el-card>
     </div>
   </template>
@@ -52,10 +57,12 @@
     BellFilled,
     List,
     Avatar,
+    Comment
   } from '@element-plus/icons-vue'
   import ClassNotice from '../components/ClassNotice.vue';
   import Homework from '../components/Homework.vue';
   import Classmates from '../components/Classmates.vue';
+  import ClassChat from '../components/ClassChat.vue';
   import { useRoute } from 'vue-router';
   
   const route = useRoute(); 
@@ -76,6 +83,11 @@
       label: 'People',
       value: 'People',
       icon: Avatar,
+    },
+    {
+      label: 'Group',
+      value: 'Group',
+      icon: Comment,
     },
   ]
 

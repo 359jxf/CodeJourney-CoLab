@@ -1,6 +1,8 @@
 <template>
   <StickyNavbar/>
-  <UserList />
+  <UserList 
+    :users="fetchedUsers"
+  />
   <div class="wrapper-ce">
     <div class="inner-wrapper">
       <!-- 代码运行器 -->
@@ -80,11 +82,33 @@ const fetchFileInfo = async () => {
   }
 }
 
+const fetchedUsers = ref([]);
+
+const fetchUsers = async () => {
+  try {
+    const response = await axios.get(`http://localhost:8048/document/getUsersByDocumentId?documentId=${documentId.value}`,{
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    });
+    console.log(response.data);
+    fetchedUsers.value = response.data.map((user:any) => ({
+      id: user.id,
+      name: user.username,
+    }));
+    console.log(fetchedUsers.value)
+  } catch (error) {
+    ElMessage.error('Error fetching collaborators');
+    console.error('Error fetching collaborators:', error)
+  }
+}
+
 onMounted(() => {
   // 初始化从路由获取的参数
   console.log(route.query.documentId);
   documentId.value = Number(route.query.documentId);
   fetchFileInfo();
+  fetchUsers();
 });
 </script>
 

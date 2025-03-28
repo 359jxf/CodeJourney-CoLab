@@ -16,7 +16,7 @@
   <div class="features-intro">
     <div class="bar"></div>
     <div>
-      <p>A Selection of Recommended Features</p>
+      <p>A Shortcut of Recommended Features</p>
       <p>for Users to Try</p>
     </div>
   </div>
@@ -29,31 +29,31 @@
     />
     <FeatureButton
       :icon="Connection"
-      text="Team Projects"
-      route="/editlist"
+      text="Online Judge"
+      route="/problemlist"
     />
     <FeatureButton
       :icon="Opportunity"
-      text="Free Exploration"
-      route="/editlist"
+      text="Blog Share"
+      route="/blog"
     />
     <FeatureButton
       :icon="Collection"
-      text="Individual Practice"
-      route="/problemlist"
+      text="Class Activity"
+      route="/profile"
     />
   </div>
   <div class="buttons">
-    <!-- <FeatureButton
+    <FeatureButton
       :icon="Flag"
       text="Team Competitions"
       route="/problemlist"
-    /> -->
-    <!-- <FeatureButton
+    /> 
+    <FeatureButton
       :icon="Reading"
       text="Peer Code Review"
       route="/"
-    /> -->
+    />
   </div>
 
   <!-- 底部联系方式和项目简介 -->

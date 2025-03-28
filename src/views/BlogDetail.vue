@@ -1,90 +1,71 @@
 <template>
    <StickyNavbar
     />
-  <div class="blog-detail">
-    <!-- 左侧操作栏 -->
-    <div class="action-bar">
-      <div class="action-buttons">
-        <el-button 
-          circle 
-          class="action-button"
-          :class="{ 'is-liked': isLiked }"
-          @click="toggleLike"
-        >
-          <el-icon><Star /></el-icon>
-          <span class="action-count">{{ post.likeCount }}</span>
-        </el-button>
-        <el-button 
-          circle 
-          class="action-button"
-          @click="showComments = true"
-        >
-          <el-icon><ChatDotRound /></el-icon>
-          <span class="action-count">{{ post.commentCount }}</span>
-        </el-button>
-        <el-button circle class="action-button">
-          <el-icon><Share /></el-icon>
-        </el-button>
-        <el-button circle class="action-button">
-          <el-icon><Warning /></el-icon>
-        </el-button>
-      </div>
-    </div>
 
+  <!-- 左侧操作栏 -->
+  <div class="action-bar">
+      <el-button 
+        circle 
+        class="action-button"
+        :class="{ 'is-liked': isLiked }"
+        @click="toggleLike"
+      >
+        <el-icon><Star /></el-icon>
+        <span class="action-count">{{ post.likeCount }}</span>
+      </el-button>
+      <el-button 
+        circle 
+        class="action-button"
+        @click="showComments = true"
+      >
+        <el-icon><ChatDotRound /></el-icon>
+        <span class="action-count">{{ post.commentCount }}</span>
+      </el-button>
+      <el-button circle class="action-button">
+        <el-icon><Share /></el-icon>
+      </el-button>
+  </div>
+
+  <el-card class="blog-detail">
     <!-- 中间文章内容 -->
     <div class="content-container">
-      <el-card class="content-card">
-        <div class="article-header">
-          <h1 class="article-title">{{ post.title }}</h1>
-          <div class="article-meta">
-            <span class="author">Author: {{ post.author }}</span>
-            <span class="date">{{ formatDate(post.publishTime) }}</span>
-            <span class="views"><el-icon><View /></el-icon> {{ post.viewCount }}</span>
-          </div>
-          <div class="article-tags">
-            <el-tag 
-              v-for="tag in post.tags" 
-              :key="tag" 
-              size="small"
-              class="article-tag"
-            >
-              {{ tag }}
-            </el-tag>
-          </div>
+      <div class="article-header">
+        <h1 class="article-title">{{ post.title }}</h1>
+        <div class="article-meta">
+          <span class="author">Author: {{ post.author }}</span>
+          <span class="date">{{ formatDate(post.publishTime) }}</span>
+          <span class="views"><el-icon><View /></el-icon> {{ post.viewCount }}</span>
         </div>
-        <div class="article-content" v-html="renderedContent"></div>
-      </el-card>
+        <div class="article-tags">
+          <el-tag 
+            v-for="tag in post.tags" 
+            :key="tag" 
+            size="small"
+            class="article-tag"
+          >
+            {{ tag }}
+          </el-tag>
+        </div>
+      </div>
+      <div class="article-content" v-html="renderedContent"></div>
     </div>
 
-    <!-- 右侧信息栏 -->
-    <div class="info-sidebar">
-      <el-card class="author-card">
+    <!-- 下侧信息栏 -->
+    <div class="author-card">
+      <div>
+        <img :src="authorInfo.avatar" class="author-avatar" />
+      </div>
+      <div>
         <div class="author-info">
-          <img :src="authorInfo.avatar" class="author-avatar" />
-          <h3 class="author-name">{{ authorInfo.username }}</h3>
-          <p class="author-bio">{{ authorInfo.bio }}</p>
-          <div class="author-stats">
-            <div class="stat-item">
-              <span class="stat-label">Posts</span>
-              <span class="stat-value">{{ authorInfo.postCount }}</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Views</span>
-              <span class="stat-value">{{ authorInfo.totalViews }}</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Likes</span>
-              <span class="stat-value">{{ authorInfo.totalLikes }}</span>
-            </div>
+          <div class="author-name">{{ authorInfo.username }}</div>
+          <div class="stat-item">
+            Posts: {{ authorInfo.postCount }}
           </div>
         </div>
-      </el-card>
-
-      <el-card class="toc-card">
-        <div class="toc-title">Contents</div>
-        <div class="toc-content" v-html="toc"></div>
-      </el-card>
+        <el-button type="text">more ></el-button>
+      </div>
     </div>
+  </el-card>
 
     <!-- 评论抽屉 -->
     <el-drawer
@@ -128,7 +109,6 @@
         </div>
       </div>
     </el-drawer>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -241,10 +221,7 @@ Composition API 为 Vue 开发带来了更多的灵活性和可维护性。通�
 const authorInfo = ref({
   username: 'Rosaria',
   avatar: '/avatar1.png',
-  bio: '前端开发工程师，热爱技术分享',
   postCount: 3,
-  totalViews: 8900,
-  totalLikes: 240
 });
 
 // 渲染Markdown内容
@@ -331,38 +308,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.blog-detail {
-  display: flex;
-  margin: 80px 0 40px 0;
-  padding: 0 20px;
-  gap: 20px;
-  justify-content: space-between;
-}
-
 .action-bar {
-  width: 6%;
-  position: sticky;
+  left: 10px;
+  position: fixed;
   top: 30vh;
-  height: fit-content;
-  margin-right: 3vw;
-}
-
-.action-buttons {
   display: flex;
   flex-direction: column;
   gap: 20px;
   align-items: center;
 }
 
+
 .action-button {
-  display: flex;
-  flex-direction: row;
   border: none;
-  align-items: center;
-  width: 5vw;
-  height: 10vh;
+  width: 80px;
+  height: 80px;
   position: relative;
-  padding: 0;
 }
 .action-button:hover{
   background-color: #d2e8ff;
@@ -382,13 +343,23 @@ onMounted(() => {
   margin-left: 8px;
 }
 
-.content-container {
-  flex: 1;
-  max-width: 65%;
+.action-button.is-liked {
+  background-color: rgb(255, 207, 50);
 }
 
-.content-card {
+.action-button.is-liked .el-icon {
+  color: #ffffff;
+}
+
+.blog-detail {
+  margin: 100px 200px;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-container {
   padding: 30px;
+  border-bottom: 1px dashed #d0d0d0;
 }
 
 .article-header {
@@ -428,81 +399,33 @@ onMounted(() => {
   margin: 20px auto;
 }
 
-.info-sidebar {
-  width: 20%;
-
-  position: sticky;
-  height: fit-content;
-}
-
 .author-card {
-  margin-bottom: 20px;
-}
-
-.author-info {
-  text-align: center;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-top: 20px;
+  gap: 10px;
 }
 
 .author-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  margin-bottom: 15px;
+  width: 50px;
+  height: 50px;
+  border-radius: 10%;
+}
+
+.author-info {
+  display: flex;
+  align-items: end;
+  gap: 5px;
 }
 
 .author-name {
   font-size: 18px;
-  margin-bottom: 10px;
-}
-
-.author-bio {
-  color: #666;
-  margin-bottom: 20px;
-}
-
-.author-stats {
-  display: flex;
-  justify-content: space-around;
-  text-align: center;
 }
 
 .stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #666;
-}
-
-.stat-value {
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.toc-card {
-  padding: 20px;
-}
-
-.toc-title {
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 15px;
-}
-
-.toc-content {
   font-size: 14px;
-  line-height: 1.8;
-}
-
-.action-button.is-liked {
-  background-color: rgb(255, 207, 50);
-}
-
-.action-button.is-liked .el-icon {
-  color: #ffffff;
+  color: #666;
 }
 
 /* 评论样式 */

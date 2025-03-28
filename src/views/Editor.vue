@@ -59,17 +59,25 @@
     </div>
 
     <div class="editor-footer">
-      <el-button 
-        @click="goBack"
-      >
-        Cancel
-      </el-button>
-      <el-button 
-        type="primary" 
-        @click="publishArticle"
-      >
-        Publish
-      </el-button>
+      <div>
+        <el-radio-group v-model="vision">
+          <el-radio-button label="Everyone Can See" value="all" />
+          <el-radio-button label="Only Me" value="only" />
+        </el-radio-group>
+      </div>
+      <div>
+        <el-button 
+          @click="goBack"
+        >
+          Cancel
+        </el-button>
+        <el-button 
+          type="primary" 
+          @click="publishArticle"
+        >
+          Publish
+        </el-button>
+      </div>
     </div>
   </div>
 </template>
@@ -87,18 +95,15 @@ const articleTitle = ref('')
 const selectedType = ref('')
 const selectedTags = ref([])
 const editorContent = ref('')
+const vision = ref('Everyone can see')
 
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 
 // 文章分类
 const articleTypes = ref([
-  { id: 1, name: 'Learning' },
-  { id: 2, name: 'Technology' },
-  { id: 3, name: 'Competition' },
-  { id: 4, name: 'Interview' },
-  { id: 5, name: 'AI' },
-  { id: 6, name: 'Life' }
+  { id: 1, name: 'Share Notes' },
+  { id: 2, name: 'Question Hub' },
 ])
 
 // 可选标签
@@ -248,7 +253,7 @@ const publishArticle = () => {
 
 .editor-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   gap: 15px;
   padding: 30px 0 0;
   margin-top: 20px;

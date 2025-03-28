@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 // 定义路由组件
 const Home = () => import('../views/Home.vue');
+const Guide = () => import('../views/Guide.vue');
 const About = () => import('../views/About.vue');
 const AboutAlgorithm = () => import('../views/AboutAlgorithm.vue');
 const Login = () => import('../views/Login.vue');
@@ -15,6 +16,7 @@ const SubmissionDetail = () => import('../views/SubmissionDetail.vue');
 const ClassDetail = () => import('../views/ClassDetail.vue');
 const BlogHome = () => import('../views/BlogHome.vue');
 const BlogDetail = () => import('../views/BlogDetail.vue');
+const QADetail = () => import('../views/QADetail.vue');
 const MyBlog = () => import('../views/MyBlog.vue');
 const Editor = () => import('../views/Editor.vue');
 
@@ -24,6 +26,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/guide',
+    name: 'Guide',
+    component: Guide
   },
   {
     path: '/about',
@@ -96,6 +103,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/blog/:id',
     name: 'BlogDetail',
     component: BlogDetail, 
+  },
+  {
+    path: '/blogqa/:id',
+    name: 'QADetail',
+    component: QADetail, 
   },
   {
     path: '/my-blog',

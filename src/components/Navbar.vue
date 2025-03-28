@@ -2,7 +2,7 @@
 <nav :class="['navbar', navbarClass]">
   <div class="navbar-content">
     <!-- Logo区域 -->
-    <div class="logo-container">
+    <div class="logo-container" @click="gotoGuide()">
       <img src="/unicorn.png" alt="logo" class="logo" />
       <!-- <img src="/name.png" alt="name" class="name" /> -->
       <p :style="{ fontWeight: 800, margin: '10px', fontSize: '20px' }" >CodeJourney Colab</p>
@@ -43,18 +43,19 @@
   
   <script lang="ts" setup>
   import { ref, onMounted, watch, onBeforeUnmount, computed } from 'vue';
-  import { useRoute } from 'vue-router';
+  import { useRoute, useRouter } from 'vue-router';
   
   const route = useRoute(); // 获取当前路由
+  const router=useRouter();
   
   // 导航链接数据
   const links = [
     { label: 'Home', path: '/' },
-    { label: 'Online-Coding', path: '/editlist' },
-    { label: 'Practices', path: '/problemlist' },
+    { label: 'FreeCoding', path: '/editlist' },
+    { label: 'OnlineJudge', path: '/problemlist' },
     { label: 'Blog', path: '/blog' }, 
     {
-      label: 'About-Us',
+      label: 'AboutUs',
       path: '/about',
       subMenu: [
         { label: 'Project Detail', path: '/about' },
@@ -124,6 +125,10 @@
   const setActiveIndex = (index: number) => {
     activeIndex.value = index;
   };
+
+  const gotoGuide = () => {
+    router.push('/guide');
+  }
   </script>
   
   

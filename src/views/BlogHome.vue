@@ -2,6 +2,20 @@
     <StickyNavbar/>
     <div class="blog-home">
       <div class="sidebar-container">
+        <el-card class="user-card">
+          <div class="user-info">
+            <div class="avatar-container">
+              <img :src="user.avatar" alt="User Avatar" class="user-avatar" />
+            </div>
+            <div class="user-details">
+              <h3 class="username">{{ user.username }}</h3>
+              <div class="user-stats">POSTs: 2</div>
+            </div>
+            <el-button @click="goToMyBlog" type="text" size="small">My Blog >
+            </el-button>
+          </div>
+        </el-card>
+
         <el-menu
           class="type-menu"
           :default-active="selectedType"
@@ -12,7 +26,9 @@
             :key="type.id"
             :index="type.id.toString()"
           >
-          <img :src="type.icon" alt="Post Image"  class="type-icon"/>
+            <el-icon class="type-icon">
+              <component :is="type.icon" />
+            </el-icon>
             <span>{{ type.name }}</span>
           </el-menu-item>
         </el-menu>
@@ -20,10 +36,21 @@
       
       <div class="article-list">
         <div class="article-sort">
-          <el-radio-group v-model="sortType" size="large">
-            <el-radio-button label="recommend">Recommended</el-radio-button>
-            <el-radio-button label="latest">Latest</el-radio-button>
-          </el-radio-group>
+          <el-select
+          v-model="selectedTags"
+          multiple
+          collapse-tags
+          placeholder="Select tags"
+          class="tag-select"
+        >
+          <el-option
+            v-for="tag in availableTags"
+            :key="tag"
+            :label="tag"
+            :value="tag"
+          />
+        </el-select>
+        <el-input placeholder="Type to search" />
         </div>
         <el-card 
           v-for="post in sortedPosts" 
@@ -38,7 +65,7 @@
               <p class="post-summary">{{ post.summary }}</p>
               <div class="post-info">
                <div class="post-detail">
-                <span class="post-author">Author: {{ post.author }}</span>
+                <span class="post-author">{{ post.author }}</span>
                 <div class="post-stats">
                     <el-icon><View /></el-icon>
                     <span class="stat-value">{{ post.viewCount }}</span>
@@ -64,45 +91,6 @@
           </div>
         </el-card>
       </div>
-  
-      <div class="right-sidebar-container">
-        <div class="right-sidebar">
-          <el-card class="user-card">
-            <div class="user-info">
-              <div class="avatar-container">
-                <img :src="user.avatar" alt="User Avatar" class="user-avatar" />
-              </div>
-              <div class="user-details">
-                <h3 class="username">{{ user.username }}</h3>
-                <el-button @click="goToMyBlog" type="primary" size="small">My Blog >
-                </el-button>
-              </div>
-              <div class="user-stats">
-                  <span>POSTs:</span>
-                  <span>{{ userPostCount }}</span>
-                </div>
-            </div>
-          </el-card>
-          
-          <el-card class="hot-posts-card">
-            <div class="hot-posts-header">
-              <el-icon><TrendCharts /></el-icon>
-              <span>HOT POSTs</span>
-            </div>
-            <div class="hot-posts-list">
-              <div 
-                v-for="(post, index) in hotPosts" 
-                :key="post.id" 
-                class="hot-post-item"
-                @click="goToPost(post.id)"
-              >
-                <span class="post-rank" >{{ index + 1 }}</span>
-                <span class="post-title">{{ post.title }}</span>
-              </div>
-            </div>
-          </el-card>
-        </div>
-      </div>
     </div>
   </template>
   
@@ -110,17 +98,12 @@
   import { onMounted, ref, computed } from 'vue';
   import StickyNavbar from '../components/Navbar.vue';
   import { useRouter } from 'vue-router';
-  import { TrendCharts } from '@element-plus/icons-vue'
+  import { Help, Notebook, } from '@element-plus/icons-vue'
   const router = useRouter();
   // 模拟数据
   const articleTypes = ref([
-    { id: 0, name: 'All', icon: '/unicorn.png' },
-    { id: 1, name: 'Learning', icon: '/unicorn.png' },
-    { id: 2, name: 'Technology', icon: '/unicorn.png' },
-    { id: 3, name: 'Competition', icon: '/unicorn.png' },
-    { id: 4, name: 'Interview', icon: '/unicorn.png' },
-    { id: 5, name: 'AI', icon: '/unicorn.png' },
-    { id: 6, name: 'Life', icon: '/unicorn.png' },
+    { id: 0, name: 'Share Notes', icon: Notebook },
+    { id: 1, name: ' Question Hub', icon: Help },
   ]);
 
   
@@ -133,7 +116,7 @@
       author: '张三',
       viewCount: 2341,
       likeCount: 180,
-      typeId: 2,
+      typeId: 0,
       publishTime: '2024-01-15T10:00:00Z',
       tags: ['Vue3', 'Composition API', 'Frontend']
     },
@@ -145,7 +128,7 @@
       author: '李四',
       viewCount: 3150,
       likeCount: 265,
-      typeId: 4,
+      typeId: 0,
       publishTime: '2024-01-16T14:30:00Z',
       tags: ['Experience sharing', 'Campus Recruitment', 'Frontend']
     },
@@ -157,13 +140,13 @@
       author: 'Mike',
       viewCount: 1890,
       likeCount: 145,
-      typeId: 5,
+      typeId: 0,
       publishTime: '2024-01-14T09:15:00Z',
       tags: ['ChatGPT', 'API', 'Intelligent System']
     },
     {
       id: 4,
-      title: 'Internship Planning Guide for Junior Students',
+      title: 'How to balance academics and internships as a junior student',
       summary: 'How to balance academics and internships as a junior student? Sharing my internship planning experience, including resume preparation, interview tips, time management, and more...',
       image: '/study.png',
       author: 'Sarah',
@@ -173,155 +156,68 @@
       publishTime: '2024-01-13T16:45:00Z',
       tags: ['Internship', 'Career', 'Planning']
     },
-    {
-      id: 5,
-      title: '蓝桥杯比赛经验分享',
-      summary: '参加蓝桥杯已经三年，从省赛到国赛，收获了不少经验。本文将分享比赛备赛策略、常见题型分析、以及如何在有限时间内提高竞赛水平...',
-      image: '/home.png',
-      author: '小红',
-      viewCount: 1560,
-      likeCount: 132,
-      typeId: 3,
-      publishTime: '2024-01-12T11:20:00Z',
-      tags: ['蓝桥杯', '竞赛经验', '编程']
-    },
-    {
-      id: 6,
-      title: '从实习生到正式员工的转正之路',
-      summary: '记录我在某互联网公司从实习生转正的经历。分享工作中的收获与挑战，以及如何在实习期间展现自己的价值，成功通过转正评估...',
-      image: null,
-      author: '小李',
-      viewCount: 2100,
-      likeCount: 167,
-      typeId: 4,
-      publishTime: '2024-01-11T13:40:00Z',
-      tags: ['转正经历', '职场', '工作']
-    },
-    {
-      id: 7,
-      title: '使用TypeScript重构Vue项目的经验总结',
-      summary: '最近将一个中型Vue项目从JavaScript迁移到TypeScript，分享一下重构过程中的经验和踩坑记录。包括类型定义、组件改造、状态管理等方面的实践...',
-      image: null,
-      author: 'Smith',
-      viewCount: 1850,
-      likeCount: 142,
-      typeId: 2,
-      publishTime: '2024-01-10T15:20:00Z',
-      tags: ['TypeScript', 'Vue', 'Refactor']
-    },
-    {
-      id: 8,
-      title: '记一次性能优化实践',
-      summary: '项目上线后发现首屏加载时间过长，通过分析性能瓶颈，采用懒加载、代码分割、缓存优化等手段，最终将加载时间缩短了60%...',
-      image: '/code.png',
-      author: 'Smith',
-      viewCount: 2200,
-      likeCount: 188,
-      typeId: 2,
-      publishTime: '2024-01-09T11:30:00Z',
-      tags: ['Performance', 'Frontend', 'Optimization']
-    },
-    {
-      id: 9,
-      title: 'Modern Frontend Development Setup',
-      summary: 'A guide to setting up a modern frontend development environment. We\'ll cover Vite configuration, ESLint setup, Git hooks, automated testing, and other tools to improve team productivity...',
-      image: null,
-      author: 'WANGXINCHENG',
-      viewCount: 1680,
-      likeCount: 135,
-      typeId: 2,
-      publishTime: '2024-01-08T09:45:00Z',
-      tags: ['DevOps', 'Vite', 'ESLint']
-    }
   ]);
+
+  const selectedTags = ref([])
+  const availableTags = ref([
+  'Vue', 'React', 'TypeScript', 'JavaScript', 
+  'Node.js', 'Python', 'Java', 'Algorithm',
+  'Frontend', 'Backend', 'Fullstack', 'Interview'
+])
   
   const user = ref({ username: 'Smith', avatar: '/avatar.png' });
   
-  const filteredPosts = ref(posts.value); // 初始为所有文章
-  const selectedType = ref('0'); // 默认选中第一项
-  const hoveredType = ref(null);
-  
-  const sortType = ref('recommend'); // 默认排序方式
+  const selectedType = ref('0'); // 默认选中第一项  
+  const filteredPosts = ref(posts.value.filter(post => post.typeId === 0)); // 初始为第一种文章
   
   const filterByType = (index: string) => {
     selectedType.value = index;
     const typeId = parseInt(index);
-    
-    if (typeId === 0) {
-      // 综合标签：显示所有帖子并按点赞数排序
-      filteredPosts.value = [...posts.value].sort((a, b) => b.likeCount - a.likeCount);
-    } else {
-      // 其他标签：按类型筛选
-      filteredPosts.value = posts.value.filter(post => post.typeId === typeId);
-    }
+
+    filteredPosts.value = posts.value.filter(post => post.typeId === typeId);
   };
   
   const goToPost = (postId: number) => {
-    router.push({ path: `/blog/${postId}` });
+    const filteredPost = posts.value.filter(post => post.id === postId);
+
+    if (filteredPost.length > 0) {
+        const post = filteredPost[0];  
+        if (post.typeId === 0) {
+          router.push({ path: `/blog/${postId}` });
+        } else {
+          router.push({ path: `/blogqa/${postId}` });
+        }
+    }
+    
   };
   
   const goToMyBlog = () => {
     router.push({ path: '/my-blog' });
   };
   
-  // 根据选择的排序方式对文章进行排序
+  // 根据选择的标签搜索文章
   const sortedPosts = computed(() => {
     const postsToSort = [...filteredPosts.value];
-    if (sortType.value === 'recommend') {
-      return postsToSort.sort((a, b) => b.likeCount - a.likeCount);
-    } else {
-      return postsToSort.sort((a, b) => 
-        new Date(b.publishTime).getTime() - new Date(a.publishTime).getTime()
-      );
-    }
+    return postsToSort.filter(post => 
+        selectedTags.value.every(tag => post.tags.includes(tag))
+    );
   });
-
-  // 计算当前用户的文章数
-  const userPostCount = computed(() => {
-    return posts.value.filter(post => post.author === user.value.username).length;
-  });
-
-  // 计算热门文章（按照浏览量和点赞数的加权计算）
-  const hotPosts = computed(() => {
-    return [...posts.value]
-      .sort((a, b) => {
-        const scoreA = a.viewCount * 0.6 + a.likeCount * 0.4;
-        const scoreB = b.viewCount * 0.6 + b.likeCount * 0.4;
-        return scoreB - scoreA;
-      })
-      .slice(0, 10); // 只显示前10篇
-  });
-
-  // 日期格式化函数
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
-
   </script>
   
   <style scoped>
   .blog-home {
     display: flex;
-    margin: 80px 0 40px 0;
+    padding: 80px 100px 40px 100px;
     justify-content: center; 
+    gap: 10px;
   }
   
   .sidebar-container {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-left: 1%;
-    margin-right: 1%;
-    top: 80px; 
-    width: 13%;
-    height: calc(100vh - 80px); 
-    overflow: hidden; 
-    background: transparent;
-    border: none;
+    width: 20%;
+    gap:20px;
   }
   .type-menu {
     width: 100%;
@@ -358,23 +254,10 @@
     border-left: 3px solid #409EFF; 
   }
   
-  .right-sidebar-container {
-    margin-left: 1%;
-    margin-right: 1%;
-    top: 80px; 
-    right: 0; 
-    width: 20%;
-    height: calc(100vh - 80px);
-    overflow: hidden; 
-    background: transparent;
-  }
-
-  
   .article-list {
     background-color: white;
     border: none;
-    position: relative;
-    width: 60%;
+    width: 80%;
   }
   
   .post-card {
@@ -487,10 +370,16 @@
   }
   
 .article-sort {
-  padding: 0px;
+  padding: 10px;
   border-bottom: 1px solid #eee;
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.tag-select {
+  width: 40%;
 }
 
 .el-radio-group {
@@ -528,18 +417,10 @@
   box-shadow: none !important;
 }
 
-.user-card {
-  height: 15vh;
-  margin-bottom: 30px;
-  padding: 0;
-}
-
 .user-info {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 0;
-  margin: 0;
 }
 
 .avatar-container {
@@ -559,26 +440,8 @@
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  font-size: 1.2em;
 }
-.user-details .el-button{
-  width: 100%;
-  margin-left: 10%;
-  height: 4.5vh;
-  border: none;
-  border-radius: 0;
-  background-color: white;
-  color:  #409EFF;
 
-  font-size: 0.8em !important;
-}
-.user-details .el-button:hover{
-  border-bottom: 2px solid #409EFF;
-  transform:all 0s ease;
-}
-:deep(.user-details .el-button){
-  color: #409EFF;
-}
 .username {
   margin: 0;
   font-weight: bold;
@@ -586,78 +449,7 @@
 }
 
 .user-stats {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px; 
   color: rgb(142, 146, 150);
-  font-size: 1.1em;
-  font-weight: medium;
-  margin-bottom: 5px;
 }
 
-.hot-posts-card {
-  margin-top: 20px;
-}
-
-.hot-posts-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid #eee;
-  font-size: 16px;
-  font-weight: bold;
-}
-
-.hot-posts-header .el-icon {
-  color: #f07777;
-  font-size: 20px;
-}
-
-.hot-posts-list {
-  margin-top: 12px;
-}
-
-.hot-post-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 0;
-  cursor: pointer;
-}
-
-.hot-post-item:hover .post-title {
-  color: #409EFF;
-}
-
-.post-rank {
-  min-width: 1vw;
-  text-align: center;
-  color: grey;
-  font-weight: bold;
-}
-
-/* 使用属性选择器 */
-.hot-post-item:nth-of-type(1) .post-rank {
-  color: #f56c6c;
-}
-
-.hot-post-item:nth-of-type(2) .post-rank {
-  color: #e6a23c;
-}
-
-.hot-post-item:nth-of-type(3) .post-rank {
-  color: #67c23a;
-}
-
-.hot-posts-list .post-title {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: #343434;
-  font-size: 1em;
-  font-weight: 400 !important;
-}
 </style>

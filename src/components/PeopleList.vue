@@ -13,10 +13,10 @@
         <ul class="user-item"> 
             <!-- 用户列表 -->
             <li
-                v-for="user in users"
+                v-for="user in props.users"
                 :key="user.id"
                 >
-                <img :src="user.avatar" alt="avatar" class="avatar" />
+                <img src="https://img.icons8.com/bubbles/50/000000/user.png" alt="avatar" class="avatar" />
                 <span class="user-name">{{ user.name }}</span>
             </li>
         </ul>
@@ -31,7 +31,7 @@
   </template>
   
   <script lang="ts" setup>
-  import { ref, reactive } from 'vue';
+  import { ref, reactive, defineProps } from 'vue';
   
   const isOpen = ref(false);
   
@@ -39,13 +39,17 @@
   const toggleSidebar = () => {
     isOpen.value = !isOpen.value;
   };
-  
-  const users = reactive([
-    { id: 1, name: 'Patrick Linod', avatar: 'https://img.icons8.com/bubbles/50/000000/user.png' },
-    { id: 2, name: 'Steven Hmpire', avatar: 'https://img.icons8.com/bubbles/50/000000/user-male.png' },
-    { id: 3, name: 'Alan Musk', avatar: 'https://img.icons8.com/doodle/50/000000/user.png' },
-    { id: 4, name: 'Lawrence Telon', avatar: 'https://img.icons8.com/bubbles/50/000000/administrator-male.png' },
-  ]);
+
+  const props = defineProps<{ 
+    users: Coworker[];
+  }>();
+
+  // 消息数据类型
+  interface Coworker {
+    id: number;
+    name: string;
+  }
+
   </script>
   
   <style scoped>
